@@ -1,9 +1,9 @@
-const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const PrettierPlugin = require('prettier-webpack-plugin');
-const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
+import path from 'path';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import ScriptExtHtmlWebpackPlugin from 'script-ext-html-webpack-plugin';
+import { Configuration } from 'webpack';
 
-module.exports = {
+const config: Configuration = {
   mode: 'production',
   entry: './src/index.tsx',
   output: {
@@ -17,15 +17,6 @@ module.exports = {
         loaders: ['style-loader', 'css-loader?modules'],
       },
       {
-        enforce: 'pre',
-        test: /\.(jsx?|tsx?)/,
-        exclude: /(node_modules|dist)/,
-        loader: 'eslint-loader',
-        options: {
-          fix: true,
-        },
-      },
-      {
         test: /\.tsx?$/,
         use: 'ts-loader',
       },
@@ -36,29 +27,23 @@ module.exports = {
     ],
   },
   resolve: {
+    // node_modulesで使用する js ファイル用の拡張子も必要
     extensions: ['.ts', '.tsx', '.js', '.jsx'],
     alias: {
       '~': path.resolve(__dirname, './src'),
+      '@': path.resolve(__dirname, './'),
     },
   },
   plugins: [
-    new PrettierPlugin({
-      extensions: [
-        '.css',
-        '.graphql',
-        '.json',
-        '.less',
-        '.sass',
-        '.scss',
-        '.yaml',
-      ],
-    }),
     new HtmlWebpackPlugin({
       template: './src/index.html',
       title: 'React Boilerplate',
+      multiStep: true,
     }),
     new ScriptExtHtmlWebpackPlugin({
       defaultAttribute: 'async',
     }),
   ],
 };
+
+export default config;
