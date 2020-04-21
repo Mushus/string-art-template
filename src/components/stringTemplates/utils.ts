@@ -16,7 +16,8 @@ export const createAuxiliaryLines = (
       while (positionIndex >= pinPositions.length)
         positionIndex -= pinPositions.length;
       auxiliaryLinesPoint.push(pinPositions[positionIndex]);
-      if (i !== 0 && i % patterns.length === 0 && positionIndex === 0) break;
+      if (i !== 0 && i % patterns.length === 0 && positionIndex === line.start)
+        break;
     }
     const auxiliaryLinePointAttrs = auxiliaryLinesPoint
       .flatMap((v) => v)
