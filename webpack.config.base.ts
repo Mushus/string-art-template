@@ -7,7 +7,7 @@ const config: Configuration = {
   mode: 'production',
   entry: './src/index.tsx',
   output: {
-    path: path.join(__dirname, 'dist'),
+    path: path.join(__dirname, 'docs'),
     filename: 'main.js',
   },
   module: {
