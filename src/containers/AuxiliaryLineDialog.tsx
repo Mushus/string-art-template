@@ -32,7 +32,7 @@ const AuxiliaryLineDialog = () => {
   const { isOpen, templateIndex, auxiliaryLineIndex } = auxiliaryLineDialog;
   const template = templates[templateIndex];
   let auxiliaryLine: AuxiliaryLine | null = null;
-  if ('auxiliaryLines' in template) {
+  if (template && 'auxiliaryLines' in template) {
     auxiliaryLine = template.auxiliaryLines[auxiliaryLineIndex];
   }
 
