@@ -5,7 +5,7 @@ import AuxiliaryLineColors from '~/constants/auxiliaryLineColors';
 
 export interface AuxiliaryLine {
   color: string;
-  patterns: number[];
+  patterns: string[];
   start: number;
   loopCount: number;
 }

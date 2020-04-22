@@ -7,7 +7,8 @@ import Button from '@material-ui/core/Button';
 import EasyInput from '../EasyInput';
 import { AuxiliaryLine as AuxiliaryLineProps } from '~/modules/canvas';
 import ColorSelector from '~/components/colorSelector';
-import { isNumberArray } from './utils';
+import { isCalcuratableArray } from './utils';
+import { splitCalcuratableArray } from '~/logic';
 
 type Props = {
   color: AuxiliaryLineProps['color'];
@@ -53,7 +54,8 @@ const AuxiliaryLine = ({
   const onUpdatePatterns = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       const { value } = e.target;
-      const patterns = value.split(',').map((v) => Number(v.trim()));
+      const patterns = splitCalcuratableArray(value)?.map((v) => v.trim());
+      if (!patterns) return;
       onUpdate('patterns', patterns);
     },
     [onUpdate]
@@ -73,7 +75,7 @@ const AuxiliaryLine = ({
             value={patternsValue}
             placeholder="「,」区切りの整数"
             onChange={onUpdatePatterns}
-            validator={isNumberArray}
+            validator={isCalcuratableArray}
             fullWidth
           />
         </InputWrapper>
