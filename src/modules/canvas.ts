@@ -7,6 +7,7 @@ export interface AuxiliaryLine {
   color: string;
   patterns: number[];
   start: number;
+  loopCount: number;
 }
 
 export interface PropsNone {
@@ -42,6 +43,11 @@ export type TemplateProps = PropsNone | PropsCircle | PropsPolygon | PropsStar;
 
 export interface State {
   templates: Array<TemplateProps>;
+  auxiliaryLineDialog: {
+    isOpen: boolean;
+    templateIndex: number;
+    auxiliaryLineIndex: number;
+  };
   page: {
     key: string;
     width: number;
@@ -57,12 +63,17 @@ const initialState: State = {
   templates: [
     {
       type: 'circle',
-      radius: 50,
+      radius: 75,
       pinNum: 24,
       intervalRatio: 1,
       auxiliaryLines: [],
     },
   ],
+  auxiliaryLineDialog: {
+    isOpen: false,
+    templateIndex: 0,
+    auxiliaryLineIndex: 0,
+  },
   page: {
     key: defaultPageKey,
     width: defaultPage.width,
@@ -98,10 +109,10 @@ const canvasModule = createSlice({
 
     addAuxiliaryLine(
       state: State,
-      action: PayloadAction<{ shapeIndex: number }>
+      action: PayloadAction<{ templateIndex: number }>
     ) {
-      const { shapeIndex } = action.payload;
-      const shape = state.templates[shapeIndex];
+      const { templateIndex } = action.payload;
+      const shape = state.templates[templateIndex];
       if (!shape || !('auxiliaryLines' in shape)) return;
       const auxiliaryLineColorIndex = Math.floor(
         Math.random() * AuxiliaryLineColors.length
@@ -110,29 +121,33 @@ const canvasModule = createSlice({
         color: AuxiliaryLineColors[auxiliaryLineColorIndex],
         patterns: [],
         start: 0,
+        loopCount: 1000,
       });
     },
 
     updateAuxiliaryLine(
       state: State,
       action: PayloadAction<{
-        shapeIndex: number;
+        templateIndex: number;
         auxiliaryLineIndex: number;
         props: AuxiliaryLine;
       }>
     ) {
-      const { shapeIndex, auxiliaryLineIndex, props } = action.payload;
-      const shape = state.templates[shapeIndex];
+      const { templateIndex, auxiliaryLineIndex, props } = action.payload;
+      const shape = state.templates[templateIndex];
       if (!shape || !('auxiliaryLines' in shape)) return;
       shape.auxiliaryLines[auxiliaryLineIndex] = props;
     },
 
     removeAuxiliaryLine(
       state: State,
-      action: PayloadAction<{ shapeIndex: number; auxiliaryLineIndex: number }>
+      action: PayloadAction<{
+        templateIndex: number;
+        auxiliaryLineIndex: number;
+      }>
     ) {
-      const { shapeIndex, auxiliaryLineIndex } = action.payload;
-      const shape = state.templates[shapeIndex];
+      const { templateIndex, auxiliaryLineIndex } = action.payload;
+      const shape = state.templates[templateIndex];
       if (!shape || !('auxiliaryLines' in shape)) return;
       shape.auxiliaryLines.splice(auxiliaryLineIndex, 1);
     },
@@ -157,6 +172,22 @@ const canvasModule = createSlice({
       if (!ZoomFactors[zoom]) return;
       state.page.zoom = zoom;
       state.page.zoomFactor = ZoomFactors[zoom];
+    },
+
+    openAuxiliaryLineDialog(
+      state: State,
+      action: PayloadAction<{
+        templateIndex: number;
+        auxiliaryLineIndex: number;
+      }>
+    ) {
+      state.auxiliaryLineDialog = {
+        isOpen: true,
+        ...action.payload,
+      };
+    },
+    closeAuxiliaryLineDialog(state: State) {
+      state.auxiliaryLineDialog.isOpen = false;
     },
   },
 });

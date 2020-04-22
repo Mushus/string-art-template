@@ -23,7 +23,7 @@ const defaultPropsNone: PropsNone = {
 
 const defaultPropsCircle: PropsCircle = {
   type: 'circle',
-  radius: 50,
+  radius: 75,
   pinNum: 24,
   intervalRatio: 1,
   auxiliaryLines: [],
@@ -31,7 +31,7 @@ const defaultPropsCircle: PropsCircle = {
 
 const defaultPropsPolygon: PropsPolygon = {
   type: 'polygon',
-  radius: 50,
+  radius: 75,
   vertexNum: 5,
   pinNum: 5,
   auxiliaryLines: [],
@@ -39,8 +39,8 @@ const defaultPropsPolygon: PropsPolygon = {
 
 const defaultPropsStar: PropsStar = {
   type: 'star',
-  outerRadius: 50,
-  innerRadius: 25,
+  outerRadius: 75,
+  innerRadius: 50,
   vertexNum: 5,
   pinNum: 5,
   auxiliaryLines: [],
@@ -103,13 +103,16 @@ const TemplateEditorContainer = ({
   }, [index, dispatch]);
 
   const onAddAuxiliaryLines = useCallback(() => {
-    dispatch(actions.addAuxiliaryLine({ shapeIndex: index }));
+    dispatch(actions.addAuxiliaryLine({ templateIndex: index }));
   }, [index, dispatch]);
 
   const onDeleteAuxiliaryLines = useCallback(
     (auxiliaryLineIndex: number) => {
       dispatch(
-        actions.removeAuxiliaryLine({ shapeIndex: index, auxiliaryLineIndex })
+        actions.removeAuxiliaryLine({
+          templateIndex: index,
+          auxiliaryLineIndex,
+        })
       );
     },
     [index, dispatch]
@@ -119,9 +122,21 @@ const TemplateEditorContainer = ({
     (auxiliaryLineIndex: number, props: AuxiliaryLine) => {
       dispatch(
         actions.updateAuxiliaryLine({
-          shapeIndex: index,
+          templateIndex: index,
           auxiliaryLineIndex,
           props,
+        })
+      );
+    },
+    [index, dispatch]
+  );
+
+  const onOpenAuxiliaryLineDialog = useCallback(
+    (auxiliaryLineIndex: number) => {
+      dispatch(
+        actions.openAuxiliaryLineDialog({
+          templateIndex: index,
+          auxiliaryLineIndex,
         })
       );
     },
@@ -136,6 +151,7 @@ const TemplateEditorContainer = ({
       onAddAuxiliaryLines={onAddAuxiliaryLines}
       onDeleteAuxiliaryLines={onDeleteAuxiliaryLines}
       onUpdateAuxiliaryLines={onUpdateAuxiliaryLines}
+      onOpenAuxiliaryLineDialog={onOpenAuxiliaryLineDialog}
     >
       {children}
     </TemplateEditor>

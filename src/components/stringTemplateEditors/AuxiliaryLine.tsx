@@ -2,27 +2,27 @@ import React, { useCallback, ChangeEvent } from 'react';
 import styled from '@emotion/styled';
 import { css } from '@emotion/core';
 import DeleteIcon from '@material-ui/icons/Delete';
+import SettingsIcon from '@material-ui/icons/Settings';
 import Button from '@material-ui/core/Button';
 import EasyInput from '../EasyInput';
 import { AuxiliaryLine as AuxiliaryLineProps } from '~/modules/canvas';
-import ColorSelector from '../colorSelector';
-import { isNumberArray, isUnsignedInt } from './utils';
+import ColorSelector from '~/components/colorSelector';
+import { isNumberArray } from './utils';
 
-type Props = AuxiliaryLineProps & {
+type Props = {
+  color: AuxiliaryLineProps['color'];
+  patterns: AuxiliaryLineProps['patterns'];
   onDelete: () => void;
-  onUpdate: (props: AuxiliaryLineProps) => void;
+  onUpdate: <T extends keyof AuxiliaryLineProps>(
+    key: T,
+    value: AuxiliaryLineProps[T]
+  ) => void;
+  onOpenDialog: () => void;
 };
 
 const Wrapper = styled.div`
   display: flex;
-  flex-direction: column;
-`;
-const Column = styled.div`
-  display: flex;
   flex-direction: row;
-  :not(:last-child) {
-    margin: 0 0 10px;
-  }
 `;
 
 const InputWrapper = styled.div<{ fillWidth?: boolean }>`
@@ -40,56 +40,30 @@ const InputWrapper = styled.div<{ fillWidth?: boolean }>`
 const AuxiliaryLine = ({
   color,
   patterns,
-  start,
   onDelete,
   onUpdate,
+  onOpenDialog,
 }: Props) => {
   const patternsValue = patterns.join(', ');
   const onUpdateColor = useCallback(
-    (color: string) => onUpdate({ color, patterns, start }),
-    [start, patterns, onUpdate]
+    (color: string) => onUpdate('color', color),
+    [onUpdate]
   );
-  const onUpdateStart = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
-      const { value } = e.target;
-      onUpdate({ color, patterns, start: Number(value) });
-    },
-    [color, patterns, onUpdate]
-  );
+
   const onUpdatePatterns = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       const { value } = e.target;
       const patterns = value.split(',').map((v) => Number(v.trim()));
-      onUpdate({ color, patterns, start });
+      onUpdate('patterns', patterns);
     },
-    [color, start, onUpdate]
+    [onUpdate]
   );
   return (
-    <Wrapper>
-      <Column>
+    <>
+      <Wrapper>
         <InputWrapper>
           <ColorSelector value={color} onUpdate={onUpdateColor} />
         </InputWrapper>
-        <InputWrapper fillWidth={true}>
-          <EasyInput
-            label="開始位置"
-            type="text"
-            variant="outlined"
-            size="small"
-            value={start}
-            placeholder="数値"
-            onChange={onUpdateStart}
-            validator={isUnsignedInt}
-            fullWidth
-          />
-        </InputWrapper>
-        <InputWrapper>
-          <Button variant="contained" color="secondary" onClick={onDelete}>
-            <DeleteIcon />
-          </Button>
-        </InputWrapper>
-      </Column>
-      <Column>
         <InputWrapper fillWidth={true}>
           <EasyInput
             label="パターン"
@@ -103,8 +77,18 @@ const AuxiliaryLine = ({
             fullWidth
           />
         </InputWrapper>
-      </Column>
-    </Wrapper>
+        <InputWrapper>
+          <Button variant="contained" color="primary" onClick={onOpenDialog}>
+            <SettingsIcon />
+          </Button>
+        </InputWrapper>
+        <InputWrapper>
+          <Button variant="contained" color="secondary" onClick={onDelete}>
+            <DeleteIcon />
+          </Button>
+        </InputWrapper>
+      </Wrapper>
+    </>
   );
 };
 

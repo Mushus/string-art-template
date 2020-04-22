@@ -4,6 +4,7 @@ import { css } from '@emotion/core';
 import Preview from '~/containers/Preview';
 import PageSizeSelector from '~/containers/PageSizeSelector';
 import Editor from '~/containers/Editor';
+import AuxiliaryLineDialog from '~/containers/AuxiliaryLineDialog';
 
 const notPrintable = css`
   @media print {
@@ -66,9 +67,6 @@ const PreviewInner = styled.div`
     background: transparent;
   }
 `;
-const Tips = styled.div`
-  margin: 10px;
-`;
 
 const App = (): React.ReactElement => {
   return (
@@ -80,12 +78,6 @@ const App = (): React.ReactElement => {
           </Header>
           <nav>
             <Editor />
-            <Tips>
-              <p>Tips:</p>
-              <p>
-                糸掛けシミュレーションは0を最後に設定すると繰り返さなくなります。
-              </p>
-            </Tips>
           </nav>
         </SideNav>
         <PreviewWrap>
@@ -97,6 +89,7 @@ const App = (): React.ReactElement => {
       <PageNav>
         <PageSizeSelector />
       </PageNav>
+      <AuxiliaryLineDialog />
     </>
   );
 };

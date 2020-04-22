@@ -8,7 +8,7 @@ export const createAuxiliaryLines = (
     let positionIndex = line.start;
     const auxiliaryLinesPoint = [pinPositions[positionIndex]];
     const patterns = line.patterns;
-    for (let i = 0; i < 1000; i++) {
+    for (let i = 0; i < line.loopCount; i++) {
       const skip = patterns[i % patterns.length];
       positionIndex += skip;
       if (skip === 0) break;

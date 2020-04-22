@@ -17,7 +17,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   border: 1px solid #ccc;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
 `;
 
 const HeaderControl = styled.div`
@@ -29,7 +29,7 @@ const HeaderControl = styled.div`
 `;
 
 const BasicControl = styled.div`
-  margin: 40px 0 10px;
+  margin: 20px 0 10px;
   padding: 0 10px;
 `;
 
@@ -46,7 +46,7 @@ const FooterTitle = styled.span`
 `;
 
 const AuxiliaryLinesWrapper = styled.div`
-  margin: 40px 0 10px;
+  margin: 20px 0 10px;
 `;
 
 interface Props {
@@ -56,6 +56,7 @@ interface Props {
   onAddAuxiliaryLines: () => void;
   onDeleteAuxiliaryLines: (index: number) => void;
   onUpdateAuxiliaryLines: (index: number, props: AuxiliaryLineProps) => void;
+  onOpenAuxiliaryLineDialog: (auxiliaryLineIndex: number) => void;
   children?: React.ReactNode;
 }
 
@@ -67,6 +68,7 @@ const TemplateEditor = ({
   onAddAuxiliaryLines,
   onDeleteAuxiliaryLines,
   onUpdateAuxiliaryLines,
+  onOpenAuxiliaryLineDialog,
   children,
 }: Props) => {
   return (
@@ -106,17 +108,23 @@ const TemplateEditor = ({
           </FooterController>
           {props.auxiliaryLines.map((lines, index) => {
             const onDelete = () => onDeleteAuxiliaryLines(index);
-            const onUpdate = (props: AuxiliaryLineProps) => {
-              onUpdateAuxiliaryLines(index, props);
+            const onUpdate = <T extends keyof AuxiliaryLineProps>(
+              key: T,
+              value: AuxiliaryLineProps[T]
+            ) => {
+              onUpdateAuxiliaryLines(index, { ...lines, [key]: value });
+            };
+            const onOpenDialog = () => {
+              onOpenAuxiliaryLineDialog(index);
             };
             return (
               <AuxiliaryLinesWrapper key={index}>
                 <AuxiliaryLine
                   color={lines.color}
                   patterns={lines.patterns}
-                  start={lines.start}
                   onDelete={onDelete}
                   onUpdate={onUpdate}
+                  onOpenDialog={onOpenDialog}
                 />
               </AuxiliaryLinesWrapper>
             );
