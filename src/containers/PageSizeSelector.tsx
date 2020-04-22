@@ -28,6 +28,7 @@ const PageSizeSelectorContainer = () => {
   const onClickZoomOut = useCallback(() => dispatch(actions.zoomOut()), [
     dispatch,
   ]);
+  const onClickPrint = useCallback(() => window.print(), []);
 
   return (
     <PageSizeSelector
@@ -36,6 +37,7 @@ const PageSizeSelectorContainer = () => {
       onChangeSize={onChangeSize}
       onClickZoomIn={onClickZoomIn}
       onClickZoomOut={onClickZoomOut}
+      onClickPrint={onClickPrint}
     />
   );
 };

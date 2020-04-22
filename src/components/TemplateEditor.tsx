@@ -3,6 +3,7 @@ import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import DeleteIcon from '@material-ui/icons/Delete';
+import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
 import ShapeTemplates from '~/constants/shapeTemplates';
 import styled from '@emotion/styled';
@@ -11,7 +12,6 @@ import {
   AuxiliaryLine as AuxiliaryLineProps,
 } from '~/modules/canvas';
 import AuxiliaryLine from '~/components/stringTemplateEditors/AuxiliaryLine';
-import AddIcon from '@material-ui/icons/Add';
 
 const Wrapper = styled.div`
   display: flex;

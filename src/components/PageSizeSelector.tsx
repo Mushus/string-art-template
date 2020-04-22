@@ -6,7 +6,9 @@ import PageSize from '~/constants/pageSize';
 import Button from '@material-ui/core/Button';
 import ZoomInIcon from '@material-ui/icons/ZoomIn';
 import ZoomOutIcon from '@material-ui/icons/ZoomOut';
+import PrintIcon from '@material-ui/icons/Print';
 import styled from '@emotion/styled';
+import Tooltip from '@material-ui/core/Tooltip';
 
 const ControllerWrapper = styled.div`
   margin-left: 10px;
@@ -29,6 +31,7 @@ interface Props {
   onChangeSize: (e: ChangeEvent<{ value: unknown }>) => void;
   onClickZoomIn: () => void;
   onClickZoomOut: () => void;
+  onClickPrint: () => void;
 }
 
 const label = '用紙サイズ';
@@ -39,19 +42,24 @@ export const PaperSizeSelector = ({
   onChangeSize,
   onClickZoomIn,
   onClickZoomOut,
+  onClickPrint,
 }: Props) => {
   return (
     <PaperSizeSelectorWrapper>
       <Text>{Math.round(zoomFactor * 100)} %</Text>
       <ControllerWrapper>
-        <Button variant="contained" color="primary" onClick={onClickZoomIn}>
-          <ZoomInIcon />
-        </Button>
+        <Tooltip title="拡大">
+          <Button variant="contained" color="primary" onClick={onClickZoomIn}>
+            <ZoomInIcon />
+          </Button>
+        </Tooltip>
       </ControllerWrapper>
       <ControllerWrapper>
-        <Button variant="contained" color="primary" onClick={onClickZoomOut}>
-          <ZoomOutIcon />
-        </Button>
+        <Tooltip title="縮小">
+          <Button variant="contained" color="primary" onClick={onClickZoomOut}>
+            <ZoomOutIcon />
+          </Button>
+        </Tooltip>
       </ControllerWrapper>
       <ControllerWrapper>
         <FormControl variant="outlined" size="small">
@@ -69,6 +77,13 @@ export const PaperSizeSelector = ({
             ))}
           </Select>
         </FormControl>
+      </ControllerWrapper>
+      <ControllerWrapper>
+        <Tooltip title="印刷">
+          <Button variant="contained" color="primary" onClick={onClickPrint}>
+            <PrintIcon />
+          </Button>
+        </Tooltip>
       </ControllerWrapper>
     </PaperSizeSelectorWrapper>
   );
