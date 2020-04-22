@@ -80,12 +80,22 @@ const AuxiliaryLine = ({
           />
         </InputWrapper>
         <InputWrapper>
-          <Button variant="contained" color="primary" onClick={onOpenDialog}>
+          <Button
+            className="button-icon"
+            variant="contained"
+            color="primary"
+            onClick={onOpenDialog}
+          >
             <SettingsIcon />
           </Button>
         </InputWrapper>
         <InputWrapper>
-          <Button variant="contained" color="secondary" onClick={onDelete}>
+          <Button
+            className="button-icon"
+            variant="contained"
+            color="secondary"
+            onClick={onDelete}
+          >
             <DeleteIcon />
           </Button>
         </InputWrapper>

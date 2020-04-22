@@ -49,14 +49,24 @@ export const PaperSizeSelector = ({
       <Text>{Math.round(zoomFactor * 100)} %</Text>
       <ControllerWrapper>
         <Tooltip title="拡大">
-          <Button variant="contained" color="primary" onClick={onClickZoomIn}>
+          <Button
+            className="button-icon"
+            variant="contained"
+            color="primary"
+            onClick={onClickZoomIn}
+          >
             <ZoomInIcon />
           </Button>
         </Tooltip>
       </ControllerWrapper>
       <ControllerWrapper>
         <Tooltip title="縮小">
-          <Button variant="contained" color="primary" onClick={onClickZoomOut}>
+          <Button
+            className="button-icon"
+            variant="contained"
+            color="primary"
+            onClick={onClickZoomOut}
+          >
             <ZoomOutIcon />
           </Button>
         </Tooltip>
@@ -80,7 +90,12 @@ export const PaperSizeSelector = ({
       </ControllerWrapper>
       <ControllerWrapper>
         <Tooltip title="印刷">
-          <Button variant="contained" color="primary" onClick={onClickPrint}>
+          <Button
+            className="button-icon"
+            variant="contained"
+            color="primary"
+            onClick={onClickPrint}
+          >
             <PrintIcon />
           </Button>
         </Tooltip>

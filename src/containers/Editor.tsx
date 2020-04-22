@@ -180,7 +180,12 @@ const EditorContainer = () => {
   return (
     <Wrapper>
       <Controller>
-        <Button variant="contained" color="primary" onClick={handleClickAdd}>
+        <Button
+          className="button-icon"
+          variant="contained"
+          color="primary"
+          onClick={handleClickAdd}
+        >
           <AddIcon />
         </Button>
       </Controller>

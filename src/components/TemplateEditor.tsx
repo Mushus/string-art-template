@@ -5,6 +5,7 @@ import Select from '@material-ui/core/Select';
 import DeleteIcon from '@material-ui/icons/Delete';
 import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
+import Tooltip from '@material-ui/core/Tooltip';
 import ShapeTemplates from '~/constants/shapeTemplates';
 import styled from '@emotion/styled';
 import {
@@ -89,21 +90,34 @@ const TemplateEditor = ({
             ))}
           </Select>
         </FormControl>
-        <Button variant="contained" color="secondary" onClick={onDelete}>
-          <DeleteIcon />
-        </Button>
+        <div>
+          {/* ボタンが縦長になる */}
+          <Tooltip title="このテンプレートを削除">
+            <Button
+              className="button-icon"
+              variant="contained"
+              color="secondary"
+              onClick={onDelete}
+            >
+              <DeleteIcon />
+            </Button>
+          </Tooltip>
+        </div>
       </HeaderControl>
       <BasicControl>{children}</BasicControl>
       {'auxiliaryLines' in props && (
         <FooterControl>
           <FooterController>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={onAddAuxiliaryLines}
-            >
-              <AddIcon />
-            </Button>
+            <Tooltip title="糸シミュレーションを追加する">
+              <Button
+                className="button-icon"
+                variant="contained"
+                color="primary"
+                onClick={onAddAuxiliaryLines}
+              >
+                <AddIcon />
+              </Button>
+            </Tooltip>
             <FooterTitle>糸シミュレーション</FooterTitle>
           </FooterController>
           {props.auxiliaryLines.map((lines, index) => {
