@@ -25,7 +25,7 @@ const Header = styled.header`
   ${notPrintable}
 `;
 
-const sideNavSize = 500;
+const sideNavSize = 400;
 
 const SideNav = styled.div`
   flex: 0 0 ${sideNavSize}px;

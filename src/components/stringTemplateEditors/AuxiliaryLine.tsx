@@ -15,6 +15,14 @@ type Props = AuxiliaryLineProps & {
 
 const Wrapper = styled.div`
   display: flex;
+  flex-direction: column;
+`;
+const Column = styled.div`
+  display: flex;
+  flex-direction: row;
+  :not(:last-child) {
+    margin: 0 0 10px;
+  }
 `;
 
 const InputWrapper = styled.div<{ fillWidth?: boolean }>`
@@ -58,39 +66,44 @@ const AuxiliaryLine = ({
   );
   return (
     <Wrapper>
-      <InputWrapper>
-        <ColorSelector value={color} onUpdate={onUpdateColor} />
-      </InputWrapper>
-      <InputWrapper>
-        <EasyInput
-          label="開始位置"
-          type="text"
-          variant="outlined"
-          size="small"
-          value={start}
-          placeholder="数値"
-          onChange={onUpdateStart}
-          validator={isUnsignedInt}
-        />
-      </InputWrapper>
-      <InputWrapper fillWidth={true}>
-        <EasyInput
-          label="パターン"
-          type="text"
-          variant="outlined"
-          size="small"
-          value={patternsValue}
-          placeholder="「,」区切りの整数"
-          onChange={onUpdatePatterns}
-          validator={isNumberArray}
-          fullWidth
-        />
-      </InputWrapper>
-      <InputWrapper>
-        <Button variant="contained" color="secondary" onClick={onDelete}>
-          <DeleteIcon />
-        </Button>
-      </InputWrapper>
+      <Column>
+        <InputWrapper>
+          <ColorSelector value={color} onUpdate={onUpdateColor} />
+        </InputWrapper>
+        <InputWrapper fillWidth={true}>
+          <EasyInput
+            label="開始位置"
+            type="text"
+            variant="outlined"
+            size="small"
+            value={start}
+            placeholder="数値"
+            onChange={onUpdateStart}
+            validator={isUnsignedInt}
+            fullWidth
+          />
+        </InputWrapper>
+        <InputWrapper>
+          <Button variant="contained" color="secondary" onClick={onDelete}>
+            <DeleteIcon />
+          </Button>
+        </InputWrapper>
+      </Column>
+      <Column>
+        <InputWrapper fillWidth={true}>
+          <EasyInput
+            label="パターン"
+            type="text"
+            variant="outlined"
+            size="small"
+            value={patternsValue}
+            placeholder="「,」区切りの整数"
+            onChange={onUpdatePatterns}
+            validator={isNumberArray}
+            fullWidth
+          />
+        </InputWrapper>
+      </Column>
     </Wrapper>
   );
 };

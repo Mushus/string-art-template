@@ -17,19 +17,28 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   border: 1px solid #ccc;
-  padding: 20px;
-  margin-bottom: 20px;
+  margin-bottom: 40px;
 `;
 
 const HeaderControl = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  margin-bottom: 10px;
+  margin: 10px 0 0;
+  padding: 0 10px;
 `;
 
+const BasicControl = styled.div`
+  margin: 40px 0 10px;
+  padding: 0 10px;
+`;
+
+const FooterControl = styled.div`
+  background-color: #eee;
+  padding: 0 10px;
+`;
 const FooterController = styled.div`
-  margin-top: 20px;
+  margin: 10px 0;
 `;
 
 const FooterTitle = styled.span`
@@ -37,7 +46,7 @@ const FooterTitle = styled.span`
 `;
 
 const AuxiliaryLinesWrapper = styled.div`
-  margin-top: 10px;
+  margin: 40px 0 10px;
 `;
 
 interface Props {
@@ -82,17 +91,19 @@ const TemplateEditor = ({
           <DeleteIcon />
         </Button>
       </HeaderControl>
-      {children}
+      <BasicControl>{children}</BasicControl>
       {'auxiliaryLines' in props && (
-        <FooterController>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={onAddAuxiliaryLines}
-          >
-            <AddIcon />
-          </Button>
-          <FooterTitle>糸シミュレーション</FooterTitle>
+        <FooterControl>
+          <FooterController>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={onAddAuxiliaryLines}
+            >
+              <AddIcon />
+            </Button>
+            <FooterTitle>糸シミュレーション</FooterTitle>
+          </FooterController>
           {props.auxiliaryLines.map((lines, index) => {
             const onDelete = () => onDeleteAuxiliaryLines(index);
             const onUpdate = (props: AuxiliaryLineProps) => {
@@ -110,7 +121,7 @@ const TemplateEditor = ({
               </AuxiliaryLinesWrapper>
             );
           })}
-        </FooterController>
+        </FooterControl>
       )}
     </Wrapper>
   );
