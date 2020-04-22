@@ -4,6 +4,7 @@ import { css } from '@emotion/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 import SettingsIcon from '@material-ui/icons/Settings';
 import Button from '@material-ui/core/Button';
+import Tooltip from '@material-ui/core/Tooltip';
 import EasyInput from '../EasyInput';
 import { AuxiliaryLine as AuxiliaryLineProps } from '~/modules/canvas';
 import ColorSelector from '~/components/colorSelector';
@@ -67,37 +68,43 @@ const AuxiliaryLine = ({
           <ColorSelector value={color} onUpdate={onUpdateColor} />
         </InputWrapper>
         <InputWrapper fillWidth={true}>
-          <EasyInput
-            label="パターン"
-            type="text"
-            variant="outlined"
-            size="small"
-            value={patternsValue}
-            placeholder="「,」区切りの整数"
-            onChange={onUpdatePatterns}
-            validator={isCalcuratableArray}
-            fullWidth
-          />
+          <Tooltip title="糸を掛けるピンの手順を指定する">
+            <EasyInput
+              label="パターン"
+              type="text"
+              variant="outlined"
+              size="small"
+              value={patternsValue}
+              placeholder="「,」区切りの整数"
+              onChange={onUpdatePatterns}
+              validator={isCalcuratableArray}
+              fullWidth
+            />
+          </Tooltip>
         </InputWrapper>
         <InputWrapper>
-          <Button
-            className="button-icon"
-            variant="contained"
-            color="primary"
-            onClick={onOpenDialog}
-          >
-            <SettingsIcon />
-          </Button>
+          <Tooltip title="その他の設定を開く">
+            <Button
+              className="button-icon"
+              variant="contained"
+              color="primary"
+              onClick={onOpenDialog}
+            >
+              <SettingsIcon />
+            </Button>
+          </Tooltip>
         </InputWrapper>
         <InputWrapper>
-          <Button
-            className="button-icon"
-            variant="contained"
-            color="secondary"
-            onClick={onDelete}
-          >
-            <DeleteIcon />
-          </Button>
+          <Tooltip title="この糸を削除する">
+            <Button
+              className="button-icon"
+              variant="contained"
+              color="secondary"
+              onClick={onDelete}
+            >
+              <DeleteIcon />
+            </Button>
+          </Tooltip>
         </InputWrapper>
       </Wrapper>
     </>

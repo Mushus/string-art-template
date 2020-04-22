@@ -108,7 +108,7 @@ const TemplateEditor = ({
       {'auxiliaryLines' in props && (
         <FooterControl>
           <FooterController>
-            <Tooltip title="糸シミュレーションを追加する">
+            <Tooltip title="糸を追加する">
               <Button
                 className="button-icon"
                 variant="contained"

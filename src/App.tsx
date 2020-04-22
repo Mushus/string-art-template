@@ -19,6 +19,7 @@ const Wrapper = styled.div`
 `;
 
 const Title = styled.h1`
+  font-size: 1.4em;
   text-align: center;
 `;
 
@@ -26,7 +27,7 @@ const Header = styled.header`
   ${notPrintable}
 `;
 
-const sideNavSize = 350;
+const sideNavSize = 320;
 
 const SideNav = styled.div`
   flex: 0 0 ${sideNavSize}px;

@@ -12,6 +12,7 @@ import {
   PropsStar,
 } from '~/modules/canvas';
 import Button from '@material-ui/core/Button';
+import Tooltip from '@material-ui/core/Tooltip';
 import AddIcon from '@material-ui/icons/Add';
 
 import Selector from '~/components/stringTemplateEditors/Selector';
@@ -180,14 +181,16 @@ const EditorContainer = () => {
   return (
     <Wrapper>
       <Controller>
-        <Button
-          className="button-icon"
-          variant="contained"
-          color="primary"
-          onClick={handleClickAdd}
-        >
-          <AddIcon />
-        </Button>
+        <Tooltip title="テンプレートを追加する">
+          <Button
+            className="button-icon"
+            variant="contained"
+            color="primary"
+            onClick={handleClickAdd}
+          >
+            <AddIcon />
+          </Button>
+        </Tooltip>
       </Controller>
       <Editor>
         {templates.map((props, index) => (
