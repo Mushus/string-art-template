@@ -1,21 +1,15 @@
 import React from 'react';
-import { AuxiliaryLine } from '~/modules/canvas/types';
+import { PropsStar } from '~/modules/canvas/types';
 import { createAuxiliaryLines } from './utils';
 import PinDrawer from './PinDrawer';
+import { DrawOptions } from './types';
 
-interface Props {
-  guideWidth: number;
-  pointWidth: number;
-  outerRadius: number;
-  innerRadius: number;
-  vertexNum: number;
-  pinNum: number;
-  auxiliaryLines: AuxiliaryLine[];
-}
+type Props = PropsStar & {
+  drawOptions: DrawOptions;
+};
 
 export default ({
-  guideWidth,
-  pointWidth,
+  drawOptions,
   outerRadius,
   innerRadius,
   vertexNum,
@@ -52,20 +46,17 @@ export default ({
         points={polygonPintsAttr}
         fill="none"
         stroke="black"
-        strokeWidth={guideWidth}
+        strokeWidth={0.1}
       />
-      <PinDrawer
-        pinPositions={pinPositions}
-        pointWidth={pointWidth}
-        withPinNum={true}
-      />
+
+      <PinDrawer pinPositions={pinPositions} drawOptions={drawOptions} />
       {auxiliaryLineAttrsList.map(({ points, stroke }, index) => (
         <polyline
           key={index}
           points={points}
           stroke={stroke}
           fill="none"
-          strokeWidth={guideWidth}
+          strokeWidth={0.1}
         />
       ))}
     </>

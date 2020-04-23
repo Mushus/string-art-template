@@ -3,15 +3,20 @@ import { TemplateProps } from '~/modules/canvas/types';
 import Circle from '~/components/stringTemplates/Circle';
 import Polygon from '~/components/stringTemplates/Polygon';
 import Star from '~/components/stringTemplates/Star';
+import { DrawOptions } from './types';
 
-const Selector = (props: TemplateProps) => {
+type Props = TemplateProps & {
+  drawOptions: DrawOptions;
+};
+
+const Selector = (props: Props) => {
   switch (props.type) {
     case 'circle':
-      return <Circle guideWidth={0.1} pointWidth={0.3} {...props} />;
+      return <Circle {...props} />;
     case 'polygon':
-      return <Polygon guideWidth={0.1} pointWidth={0.3} {...props} />;
+      return <Polygon {...props} />;
     case 'star':
-      return <Star guideWidth={0.1} pointWidth={0.3} {...props} />;
+      return <Star {...props} />;
     default:
       return null;
   }

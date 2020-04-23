@@ -1,21 +1,27 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import Canvas from '~/components/Canvas';
 import { useSelector } from 'react-redux';
 import { RootState } from '~/reducer';
 import Selector from '~/components/stringTemplates/Selector';
 
-const selector = (state: RootState) => state.canvas;
+const selector = ({ canvas, printOptions }: RootState) => ({
+  canvas,
+  printOptions,
+});
 
 const Preview = () => {
-  const {
-    templates,
-    page: { width, height, zoomFactor },
-  } = useSelector(selector);
-
+  const { canvas, printOptions } = useSelector(selector);
+  const { withPinNumber, pinSize } = printOptions;
+  const { templates, page } = canvas;
+  const { width, height, zoomFactor } = page;
+  const drawOptions = useMemo(() => ({ withPinNumber, pinSize }), [
+    withPinNumber,
+    pinSize,
+  ]);
   return (
     <Canvas width={width} height={height} zoomFactor={zoomFactor}>
       {templates.map((props, i) => (
-        <Selector key={i} {...props} />
+        <Selector key={i} drawOptions={drawOptions} {...props} />
       ))}
     </Canvas>
   );

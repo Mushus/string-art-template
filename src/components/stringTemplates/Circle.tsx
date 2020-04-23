@@ -1,20 +1,15 @@
 import React from 'react';
-import { AuxiliaryLine } from '~/modules/canvas/types';
+import { PropsCircle } from '~/modules/canvas/types';
 import { createAuxiliaryLines } from './utils';
 import PinDrawer from './PinDrawer';
+import { DrawOptions } from './types';
 
-interface Props {
-  guideWidth: number;
-  pointWidth: number;
-  radius: number;
-  pinNum: number;
-  intervalRatio: number;
-  auxiliaryLines: AuxiliaryLine[];
-}
+type Props = PropsCircle & {
+  drawOptions: DrawOptions;
+};
 
 export default ({
-  guideWidth,
-  pointWidth,
+  drawOptions,
   radius,
   pinNum,
   intervalRatio,
@@ -53,20 +48,16 @@ export default ({
         r={radius}
         fill="none"
         stroke="black"
-        strokeWidth={guideWidth}
+        strokeWidth={0.1}
       />
-      <PinDrawer
-        pinPositions={pinPositions}
-        pointWidth={pointWidth}
-        withPinNum={true}
-      />
+      <PinDrawer pinPositions={pinPositions} drawOptions={drawOptions} />
       {auxiliaryLineAttrsList.map(({ points, stroke }, index) => (
         <polyline
           key={index}
           points={points}
           stroke={stroke}
           fill="none"
-          strokeWidth={guideWidth}
+          strokeWidth={0.1}
         />
       ))}
     </>

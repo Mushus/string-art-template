@@ -1,28 +1,22 @@
 import React, { Fragment } from 'react';
+import { DrawOptions } from './types';
 
 interface Props {
   pinPositions: Array<[number, number]>;
-  pointWidth: number;
-  withPinNum: boolean;
+  drawOptions: DrawOptions;
 }
 
-const PinDrawer = ({ pinPositions, pointWidth, withPinNum = false }: Props) => {
+const PinDrawer = ({ pinPositions, drawOptions }: Props) => {
   return (
     <>
       {pinPositions.map(([x, y], i) => (
         <Fragment key={i}>
-          {withPinNum && (
+          {drawOptions.withPinNumber && (
             <text x={x + 2} y={y} fontSize={3}>
               {i + 1}
             </text>
           )}
-          <circle
-            key={`${i} ${x},${y}`}
-            cx={x}
-            cy={y}
-            r={pointWidth}
-            fill="black"
-          />
+          <circle cx={x} cy={y} r={drawOptions.pinSize} fill="black" />
         </Fragment>
       ))}
     </>

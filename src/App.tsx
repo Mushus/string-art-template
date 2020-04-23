@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import styled from '@emotion/styled';
 import { css } from '@emotion/core';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
 import Preview from '~/containers/Preview';
 import PageSizeSelector from '~/containers/PageSizeSelector';
 import Editor from '~/containers/Editor';
 import AuxiliaryLineDialog from '~/containers/AuxiliaryLineDialog';
 import PresetDialog from './containers/PresetDialog';
+import PrintOptions from './containers/PrintOptions';
 
 const notPrintable = css`
   @media print {
@@ -71,7 +74,9 @@ const PreviewInner = styled.div`
   }
 `;
 
-const App = (): React.ReactElement => {
+const App = () => {
+  const [tab, setTab] = useState(0);
+  const handleChangeTab = useCallback((_, tab) => setTab(tab), [tab]);
   return (
     <>
       <Wrapper>
@@ -79,7 +84,12 @@ const App = (): React.ReactElement => {
           <Header>
             <Title>糸掛けテンプレート</Title>
           </Header>
-          <Editor />
+          <Tabs value={tab} onChange={handleChangeTab}>
+            <Tab label="テンプレート" />
+            <Tab label="印刷設定" />
+          </Tabs>
+          {tab === 0 && <Editor />}
+          {tab === 1 && <PrintOptions />}
         </SideNav>
         <PreviewWrap>
           <PreviewInner>
