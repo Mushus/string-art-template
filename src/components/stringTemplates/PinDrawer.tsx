@@ -12,7 +12,7 @@ const PinDrawer = ({ pinPositions, pointWidth, withPinNum = false }: Props) => {
       {pinPositions.map(([x, y], i) => (
         <Fragment key={i}>
           {withPinNum && (
-            <text x={x + 2} y={y} font-size={3}>
+            <text x={x + 2} y={y} fontSize={3}>
               {i + 1}
             </text>
           )}
