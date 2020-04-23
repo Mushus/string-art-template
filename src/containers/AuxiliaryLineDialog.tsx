@@ -64,7 +64,7 @@ const AuxiliaryLineDialog = () => {
 
   return (
     <Dialog open={isOpen} onClose={onClose}>
-      <DialogTitle>糸掛けシミュレーション</DialogTitle>
+      <DialogTitle>糸シミュレーション</DialogTitle>
       {auxiliaryLine && (
         <DialogContent>
           <InputWrapper fillWidth={true}>

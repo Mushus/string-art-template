@@ -14,7 +14,7 @@ export const useAuxiliaryLineUpdator = (
 
   const template = templates[templateIndex];
   let auxiliaryLine: AuxiliaryLine | null = null;
-  if (auxiliaryLine && 'auxiliaryLines' in template) {
+  if (template && 'auxiliaryLines' in template) {
     auxiliaryLine = template.auxiliaryLines[auxiliaryLineIndex];
   }
 
