@@ -59,18 +59,23 @@ const PageSizeSelectorContainer = () => {
   );
 
   const onClickSave = useCallback(() => {
+    const fileName = 'string-art-template.json';
     const json = JSON.stringify(templates, null, 2);
     const blob = new Blob([json], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'string-art-template.json';
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(() => {
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    });
+    if (window.navigator.msSaveBlob) {
+      window.navigator.msSaveBlob(blob, fileName);
+    } else {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      });
+    }
   }, [templates]);
 
   return (
