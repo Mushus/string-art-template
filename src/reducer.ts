@@ -1,4 +1,5 @@
-import canvasModule, { State as CanvasState } from '~/modules/canvas';
+import canvasModule from '~/modules/canvas';
+import { State as CanvasState } from '~/modules/canvas/types';
 import { combineReducers } from '@reduxjs/toolkit';
 
 export interface RootState {

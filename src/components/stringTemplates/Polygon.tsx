@@ -1,5 +1,5 @@
 import React from 'react';
-import { AuxiliaryLine } from '~/modules/canvas';
+import { AuxiliaryLine } from '~/modules/canvas/types';
 import { createAuxiliaryLines } from './utils';
 
 interface Props {

@@ -1,4 +1,4 @@
-import React, { ChangeEvent } from 'react';
+import React, { ChangeEvent, useRef } from 'react';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -7,6 +7,8 @@ import Button from '@material-ui/core/Button';
 import ZoomInIcon from '@material-ui/icons/ZoomIn';
 import ZoomOutIcon from '@material-ui/icons/ZoomOut';
 import PrintIcon from '@material-ui/icons/Print';
+import SaveIcon from '@material-ui/icons/SaveAlt';
+import OpenIcon from '@material-ui/icons/OpenInBrowser';
 import styled from '@emotion/styled';
 import Tooltip from '@material-ui/core/Tooltip';
 
@@ -32,6 +34,11 @@ interface Props {
   onClickZoomIn: () => void;
   onClickZoomOut: () => void;
   onClickPrint: () => void;
+  onClickLoad: (
+    elem: HTMLInputElement,
+    e: ChangeEvent<{ files: FileList | null }>
+  ) => void;
+  onClickSave: () => void;
 }
 
 const label = '用紙サイズ';
@@ -43,7 +50,10 @@ export const PaperSizeSelector = ({
   onClickZoomIn,
   onClickZoomOut,
   onClickPrint,
+  onClickLoad,
+  onClickSave,
 }: Props) => {
+  const fileInput = useRef<HTMLInputElement>(null);
   return (
     <PaperSizeSelectorWrapper>
       <Text>{Math.round(zoomFactor * 100)} %</Text>
@@ -97,6 +107,42 @@ export const PaperSizeSelector = ({
             onClick={onClickPrint}
           >
             <PrintIcon />
+          </Button>
+        </Tooltip>
+      </ControllerWrapper>
+      <ControllerWrapper>
+        <input
+          accept="application/json"
+          id="loadFile"
+          type="file"
+          style={{ display: 'none' }}
+          ref={fileInput}
+          onChange={(e) =>
+            fileInput.current && onClickLoad(fileInput.current, e)
+          }
+        />
+        <label htmlFor="loadFile">
+          <Tooltip title="読み込み">
+            <Button
+              className="button-icon"
+              variant="contained"
+              color="primary"
+              component="span"
+            >
+              <OpenIcon />
+            </Button>
+          </Tooltip>
+        </label>
+      </ControllerWrapper>
+      <ControllerWrapper>
+        <Tooltip title="保存">
+          <Button
+            className="button-icon"
+            variant="contained"
+            color="primary"
+            onClick={onClickSave}
+          >
+            <SaveIcon />
           </Button>
         </Tooltip>
       </ControllerWrapper>

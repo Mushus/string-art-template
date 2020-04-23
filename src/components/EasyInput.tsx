@@ -11,12 +11,14 @@ type Props = TextFieldProps & {
   validator?: (v: string) => boolean;
 };
 
-const EasyInput = (props: Props) => {
+const EasyInput = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
   const { validator, ...textFieldProps } = props;
   const validateFunc = validator || (() => true);
 
   const [value, setValue] = useState<string>('');
-  useEffect(() => setValue(String(textFieldProps.value)), []);
+  useEffect(() => setValue(String(textFieldProps.value)), [
+    textFieldProps.value,
+  ]);
 
   const handleChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
@@ -43,8 +45,9 @@ const EasyInput = (props: Props) => {
       value={value}
       onChange={handleChange}
       onBlur={handleBlur}
+      ref={ref}
     />
   );
-};
+});
 
 export default EasyInput;

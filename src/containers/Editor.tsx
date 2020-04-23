@@ -2,15 +2,15 @@ import React, { useCallback, ChangeEvent } from 'react';
 import styled from '@emotion/styled';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '~/reducer';
+import { actions } from '~/modules/canvas';
 import {
-  actions,
   TemplateProps,
   PropsCircle,
   AuxiliaryLine,
   PropsNone,
   PropsPolygon,
   PropsStar,
-} from '~/modules/canvas';
+} from '~/modules/canvas/types';
 import Button from '@material-ui/core/Button';
 import Tooltip from '@material-ui/core/Tooltip';
 import AddIcon from '@material-ui/icons/Add';

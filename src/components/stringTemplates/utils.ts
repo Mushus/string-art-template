@@ -1,4 +1,4 @@
-import { AuxiliaryLine } from '~/modules/canvas';
+import { AuxiliaryLine } from '~/modules/canvas/types';
 import { createFunctionArray } from '~/logic';
 
 export const createAuxiliaryLines = (

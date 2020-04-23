@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
-import { AuxiliaryLine, actions } from '~/modules/canvas';
+import { actions } from '~/modules/canvas';
+import { AuxiliaryLine } from '~/modules/canvas/types';
 import { RootState } from '~/reducer';
 import { useSelector, useDispatch } from 'react-redux';
 

@@ -24,7 +24,6 @@ export const createFunctionArray = (ary: string[] | undefined) => {
   if (!ary) return undefined;
   try {
     const funcs = ary.map((v) => new Function('n', `return ${v};`));
-    console.log(funcs);
     return funcs;
   } catch (e) {
     return undefined;

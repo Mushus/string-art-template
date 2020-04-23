@@ -2,60 +2,12 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import PageSize from '~/constants/pageSize';
 import ZoomFactors from '~/constants/zoomFactor';
 import AuxiliaryLineColors from '~/constants/auxiliaryLineColors';
-
-export interface AuxiliaryLine {
-  color: string;
-  patterns: string[];
-  start: number;
-  loopCount: number;
-}
-
-export interface PropsNone {
-  type: 'none';
-}
-
-export interface PropsCircle {
-  type: 'circle';
-  radius: number;
-  pinNum: number;
-  intervalRatio: number;
-  auxiliaryLines: AuxiliaryLine[];
-}
-
-export interface PropsPolygon {
-  type: 'polygon';
-  radius: number;
-  vertexNum: number;
-  pinNum: number;
-  auxiliaryLines: AuxiliaryLine[];
-}
-
-export interface PropsStar {
-  type: 'star';
-  outerRadius: number;
-  innerRadius: number;
-  vertexNum: number;
-  pinNum: number;
-  auxiliaryLines: AuxiliaryLine[];
-}
-
-export type TemplateProps = PropsNone | PropsCircle | PropsPolygon | PropsStar;
-
-export interface State {
-  templates: Array<TemplateProps>;
-  auxiliaryLineDialog: {
-    isOpen: boolean;
-    templateIndex: number;
-    auxiliaryLineIndex: number;
-  };
-  page: {
-    key: string;
-    width: number;
-    height: number;
-    zoom: number;
-    zoomFactor: number;
-  };
-}
+import {
+  State,
+  AuxiliaryLine,
+  TemplateProps,
+  TemplatePropsArray,
+} from './types';
 
 const defaultPageKey = 'a4p';
 const defaultPage = PageSize[defaultPageKey];
@@ -87,6 +39,9 @@ const canvasModule = createSlice({
   name: 'canvas',
   initialState,
   reducers: {
+    updateTemplates(state: State, action: PayloadAction<TemplatePropsArray>) {
+      state.templates = action.payload;
+    },
     addShape(
       state: State,
       action: PayloadAction<{ props: TemplateProps } | undefined>

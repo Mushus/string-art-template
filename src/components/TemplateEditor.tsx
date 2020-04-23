@@ -11,7 +11,7 @@ import styled from '@emotion/styled';
 import {
   TemplateProps,
   AuxiliaryLine as AuxiliaryLineProps,
-} from '~/modules/canvas';
+} from '~/modules/canvas/types';
 import AuxiliaryLine from '~/components/stringTemplateEditors/AuxiliaryLine';
 
 const Wrapper = styled.div`

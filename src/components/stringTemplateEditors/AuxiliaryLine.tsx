@@ -6,7 +6,7 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import Button from '@material-ui/core/Button';
 import Tooltip from '@material-ui/core/Tooltip';
 import EasyInput from '../EasyInput';
-import { AuxiliaryLine as AuxiliaryLineProps } from '~/modules/canvas';
+import { AuxiliaryLine as AuxiliaryLineProps } from '~/modules/canvas/types';
 import ColorSelector from '~/components/colorSelector';
 import { isCalcuratableArray } from './utils';
 import { splitCalcuratableArray } from '~/logic';

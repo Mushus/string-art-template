@@ -1,6 +1,6 @@
 import React from 'react';
 import EasyInput from '~/components/EasyInput';
-import { PropsStar } from '~/modules/canvas';
+import { PropsStar } from '~/modules/canvas/types';
 import {
   isUnsignedFloat,
   isUnsigindIntWithoutZero,
