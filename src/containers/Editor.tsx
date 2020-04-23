@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '~/reducer';
 import { actions } from '~/modules/canvas';
+import { actions as presetDialogActions } from '~/modules/presetDialog';
 import {
   TemplateProps,
   PropsCircle,
@@ -14,7 +15,7 @@ import {
 import Button from '@material-ui/core/Button';
 import Tooltip from '@material-ui/core/Tooltip';
 import AddIcon from '@material-ui/icons/Add';
-
+import FavoriteIcon from '@material-ui/icons/Favorite';
 import Selector from '~/components/stringTemplateEditors/Selector';
 import TemplateEditor from '~/components/TemplateEditor';
 
@@ -166,6 +167,10 @@ const Wrapper = styled.div`
 `;
 const Controller = styled.div`
   margin-bottom: 20px;
+  display: flex;
+`;
+const ButtonWrapper = styled.div`
+  margin-right: 10px;
 `;
 
 const Editor = styled.div``;
@@ -178,19 +183,38 @@ const EditorContainer = () => {
     dispatch,
   ]);
 
+  const handleClickOpenPresetDialog = useCallback(
+    () => dispatch(presetDialogActions.open()),
+    [dispatch]
+  );
+
   return (
     <Wrapper>
       <Controller>
-        <Tooltip title="テンプレートを追加する">
-          <Button
-            className="button-icon"
-            variant="contained"
-            color="primary"
-            onClick={handleClickAdd}
-          >
-            <AddIcon />
-          </Button>
-        </Tooltip>
+        <ButtonWrapper>
+          <Tooltip title="テンプレートを追加する">
+            <Button
+              className="button-icon"
+              variant="contained"
+              color="primary"
+              onClick={handleClickAdd}
+            >
+              <AddIcon />
+            </Button>
+          </Tooltip>
+        </ButtonWrapper>
+        <ButtonWrapper>
+          <Tooltip title="プリセットから追加する">
+            <Button
+              className="button-icon"
+              variant="contained"
+              color="secondary"
+              onClick={handleClickOpenPresetDialog}
+            >
+              <FavoriteIcon />
+            </Button>
+          </Tooltip>
+        </ButtonWrapper>
       </Controller>
       <Editor>
         {templates.map((props, index) => (

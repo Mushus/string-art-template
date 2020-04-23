@@ -5,6 +5,7 @@ import Preview from '~/containers/Preview';
 import PageSizeSelector from '~/containers/PageSizeSelector';
 import Editor from '~/containers/Editor';
 import AuxiliaryLineDialog from '~/containers/AuxiliaryLineDialog';
+import PresetDialog from './containers/PresetDialog';
 
 const notPrintable = css`
   @media print {
@@ -34,6 +35,7 @@ const SideNav = styled.div`
   overflow: auto;
   background-color: #fff;
   box-shadow: 0 0 10px 20px rgba(0, 0, 0, 0.02);
+  z-index: 1;
   ${notPrintable}
 `;
 
@@ -54,7 +56,7 @@ const PreviewWrap = styled.div`
     margin: 0;
     padding: 0;
     width: auto;
-    height: auto
+    height: auto;
     background: transparent;
   }
 `;
@@ -77,9 +79,7 @@ const App = (): React.ReactElement => {
           <Header>
             <Title>糸掛けテンプレート</Title>
           </Header>
-          <nav>
-            <Editor />
-          </nav>
+          <Editor />
         </SideNav>
         <PreviewWrap>
           <PreviewInner>
@@ -91,6 +91,7 @@ const App = (): React.ReactElement => {
         <PageSizeSelector />
       </PageNav>
       <AuxiliaryLineDialog />
+      <PresetDialog />
     </>
   );
 };

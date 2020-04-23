@@ -141,6 +141,7 @@ const canvasModule = createSlice({
         ...action.payload,
       };
     },
+
     closeAuxiliaryLineDialog(state: State) {
       state.auxiliaryLineDialog.isOpen = false;
     },
@@ -150,4 +151,3 @@ const canvasModule = createSlice({
 export default canvasModule;
 
 export const actions = canvasModule.actions;
-export const reducers = canvasModule.reducer;

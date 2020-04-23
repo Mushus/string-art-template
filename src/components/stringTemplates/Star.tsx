@@ -1,6 +1,7 @@
 import React from 'react';
 import { AuxiliaryLine } from '~/modules/canvas/types';
 import { createAuxiliaryLines } from './utils';
+import PinDrawer from './PinDrawer';
 
 interface Props {
   guideWidth: number;
@@ -53,15 +54,11 @@ export default ({
         stroke="black"
         strokeWidth={guideWidth}
       />
-      {pinPositions.map(([x, y], i) => (
-        <circle
-          key={`${i} ${x},${y}`}
-          cx={x}
-          cy={y}
-          r={pointWidth}
-          fill="black"
-        />
-      ))}
+      <PinDrawer
+        pinPositions={pinPositions}
+        pointWidth={pointWidth}
+        withPinNum={true}
+      />
       {auxiliaryLineAttrsList.map(({ points, stroke }, index) => (
         <polyline
           key={index}
