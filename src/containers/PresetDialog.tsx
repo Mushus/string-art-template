@@ -79,6 +79,59 @@ const templates: Array<{ name: string; template: TemplateProps }> = [
     },
   },
   {
+    name: 'くじゃく',
+    template: {
+      type: 'circle',
+      radius: 75,
+      pinNum: 60,
+      intervalRatio: 1.8,
+      auxiliaryLines: [
+        {
+          color: '#cddc39',
+          patterns: ['25', '-24'],
+          start: 0,
+          loopCount: 1000,
+        },
+        {
+          color: '#4caf50',
+          patterns: ['22', '-21'],
+          start: 0,
+          loopCount: 1000,
+        },
+        {
+          color: '#009688',
+          patterns: ['19', '-18'],
+          start: 0,
+          loopCount: 1000,
+        },
+        {
+          color: '#00bcd4',
+          patterns: ['16', '-15'],
+          start: 0,
+          loopCount: 1000,
+        },
+        {
+          color: '#2196f3',
+          patterns: ['13', '-12'],
+          start: 0,
+          loopCount: 1000,
+        },
+        {
+          color: '#673ab7',
+          patterns: ['10', '-9'],
+          start: 0,
+          loopCount: 1000,
+        },
+        {
+          color: '#e91e63',
+          patterns: ['7', '-6'],
+          start: 0,
+          loopCount: 1000,
+        },
+      ],
+    },
+  },
+  {
     name: 'うず',
     template: {
       type: 'circle',
