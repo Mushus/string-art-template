@@ -6,12 +6,16 @@ import App from '~/App';
 import { Provider } from 'react-redux';
 import { createStore } from '@reduxjs/toolkit';
 import reducer from '~/reducer';
+import theme from '~/theme';
+import { MuiThemeProvider } from '@material-ui/core';
 
 const store = createStore(reducer);
 
 ReactDOM.render(
-  <Provider store={store}>
-    <App />
-  </Provider>,
+  <MuiThemeProvider theme={theme}>
+    <Provider store={store}>
+      <App />
+    </Provider>
+  </MuiThemeProvider>,
   document.querySelector('#app')
 );
