@@ -1,13 +1,13 @@
-import { AuxiliaryLine } from '~/modules/canvas/types';
+import { Thread } from '~/modules/data/current';
 import { createFunctionArray } from '~/logic';
 
-export const createAuxiliaryLines = (
-  auxiliaryLines: AuxiliaryLine[],
+export const createThreads = (
+  threads: Thread[],
   pinPositions: [number, number][]
 ) => {
-  const auxiliaryLineAttrsList = auxiliaryLines.map((line) => {
+  const threadAttrsList = threads.map((line) => {
     let positionIndex = line.start;
-    const auxiliaryLinesPoint = [pinPositions[positionIndex]];
+    const threadsPoint = [pinPositions[positionIndex]];
     const patterns = createFunctionArray(line.patterns);
     if (patterns && patterns.length > 0) {
       try {
@@ -20,7 +20,7 @@ export const createAuxiliaryLines = (
           while (positionIndex < 0) positionIndex += pinPositions.length;
           while (positionIndex >= pinPositions.length)
             positionIndex -= pinPositions.length;
-          auxiliaryLinesPoint.push(pinPositions[positionIndex]);
+          threadsPoint.push(pinPositions[positionIndex]);
 
           if (
             i !== 0 &&
@@ -34,10 +34,8 @@ export const createAuxiliaryLines = (
       } finally {
       }
     }
-    const auxiliaryLinePointAttrs = auxiliaryLinesPoint
-      .flatMap((v) => v)
-      .join(' ');
-    return { stroke: line.color, points: auxiliaryLinePointAttrs };
+    const threadPointAttrs = threadsPoint.flatMap((v) => v).join(' ');
+    return { stroke: line.color, points: threadPointAttrs };
   });
-  return auxiliaryLineAttrsList;
+  return threadAttrsList;
 };

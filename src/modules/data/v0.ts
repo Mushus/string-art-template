@@ -1,5 +1,44 @@
 import Ajv from 'ajv';
-import { TemplatePropsArray } from './types';
+
+export interface AuxiliaryLine {
+  color: string;
+  patterns: string[];
+  start: number;
+  loopCount: number;
+}
+
+export interface PropsNone {
+  type: 'none';
+}
+
+export interface PropsCircle {
+  type: 'circle';
+  radius: number;
+  pinNum: number;
+  intervalRatio: number;
+  auxiliaryLines: AuxiliaryLine[];
+}
+
+export interface PropsPolygon {
+  type: 'polygon';
+  radius: number;
+  vertexNum: number;
+  pinNum: number;
+  auxiliaryLines: AuxiliaryLine[];
+}
+
+export interface PropsStar {
+  type: 'star';
+  outerRadius: number;
+  innerRadius: number;
+  vertexNum: number;
+  pinNum: number;
+  auxiliaryLines: AuxiliaryLine[];
+}
+
+export type TemplateProps = PropsNone | PropsCircle | PropsPolygon | PropsStar;
+
+export type Data = TemplateProps[];
 
 const auxiliaryLinesSchema = {
   type: 'array',
@@ -127,16 +166,14 @@ const schema = {
     },
   ],
 };
+
 const ajv = new Ajv();
 const validate = ajv.compile(schema);
 
-const parseTemplates = (v: string) => {
-  const obj = JSON.parse(v);
+export const parseData = (obj: object) => {
   if (!validate(obj)) {
     console.error(validate.errors);
     throw new Error(`validation error`);
   }
-  return obj as TemplatePropsArray;
+  return obj as Array<TemplateProps>;
 };
-
-export default parseTemplates;

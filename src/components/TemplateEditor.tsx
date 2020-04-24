@@ -8,11 +8,8 @@ import Button from '@material-ui/core/Button';
 import Tooltip from '@material-ui/core/Tooltip';
 import ShapeTemplates from '~/constants/shapeTemplates';
 import styled from '@emotion/styled';
-import {
-  TemplateProps,
-  AuxiliaryLine as AuxiliaryLineProps,
-} from '~/modules/canvas/types';
-import AuxiliaryLine from '~/components/stringTemplateEditors/AuxiliaryLine';
+import { TemplateProps, Thread as ThreadProps } from '~/modules/data/current';
+import Thread from '~/components/stringTemplateEditors/Thread';
 
 const Wrapper = styled.div`
   display: flex;
@@ -46,7 +43,7 @@ const FooterTitle = styled.span`
   margin-left: 10px;
 `;
 
-const AuxiliaryLinesWrapper = styled.div`
+const ThreadsWrapper = styled.div`
   margin: 20px 0 10px;
 `;
 
@@ -54,10 +51,10 @@ interface Props {
   props: TemplateProps;
   onChangeShape: (event: ChangeEvent<{ value: unknown }>) => void;
   onDelete: () => void;
-  onAddAuxiliaryLines: () => void;
-  onDeleteAuxiliaryLines: (index: number) => void;
-  onUpdateAuxiliaryLines: (index: number, props: AuxiliaryLineProps) => void;
-  onOpenAuxiliaryLineDialog: (auxiliaryLineIndex: number) => void;
+  onAddThreads: () => void;
+  onDeleteThreads: (index: number) => void;
+  onUpdateThreads: (index: number, props: ThreadProps) => void;
+  onOpenThreadDialog: (auxiliaryLineIndex: number) => void;
   children?: React.ReactNode;
 }
 
@@ -66,10 +63,10 @@ const TemplateEditor = ({
   props,
   onChangeShape,
   onDelete,
-  onAddAuxiliaryLines,
-  onDeleteAuxiliaryLines,
-  onUpdateAuxiliaryLines,
-  onOpenAuxiliaryLineDialog,
+  onAddThreads,
+  onDeleteThreads,
+  onUpdateThreads,
+  onOpenThreadDialog,
   children,
 }: Props) => {
   return (
@@ -105,7 +102,7 @@ const TemplateEditor = ({
         </div>
       </HeaderControl>
       <BasicControl>{children}</BasicControl>
-      {'auxiliaryLines' in props && (
+      {'threads' in props && (
         <FooterControl>
           <FooterController>
             <Tooltip title="糸を追加する">
@@ -113,34 +110,34 @@ const TemplateEditor = ({
                 className="button-icon"
                 variant="contained"
                 color="primary"
-                onClick={onAddAuxiliaryLines}
+                onClick={onAddThreads}
               >
                 <AddIcon />
               </Button>
             </Tooltip>
             <FooterTitle>糸シミュレーション</FooterTitle>
           </FooterController>
-          {props.auxiliaryLines.map((lines, index) => {
-            const onDelete = () => onDeleteAuxiliaryLines(index);
-            const onUpdate = <T extends keyof AuxiliaryLineProps>(
+          {props.threads.map((lines, index) => {
+            const onDelete = () => onDeleteThreads(index);
+            const onUpdate = <T extends keyof ThreadProps>(
               key: T,
-              value: AuxiliaryLineProps[T]
+              value: ThreadProps[T]
             ) => {
-              onUpdateAuxiliaryLines(index, { ...lines, [key]: value });
+              onUpdateThreads(index, { ...lines, [key]: value });
             };
             const onOpenDialog = () => {
-              onOpenAuxiliaryLineDialog(index);
+              onOpenThreadDialog(index);
             };
             return (
-              <AuxiliaryLinesWrapper key={index}>
-                <AuxiliaryLine
+              <ThreadsWrapper key={index}>
+                <Thread
                   color={lines.color}
                   patterns={lines.patterns}
                   onDelete={onDelete}
                   onUpdate={onUpdate}
                   onOpenDialog={onOpenDialog}
                 />
-              </AuxiliaryLinesWrapper>
+              </ThreadsWrapper>
             );
           })}
         </FooterControl>

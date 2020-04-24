@@ -1,6 +1,6 @@
 import React from 'react';
 import EasyInput from '~/components/EasyInput';
-import { PropsPolygon } from '~/modules/canvas/types';
+import { PropsPolygon } from '~/modules/data/current';
 import {
   isUnsignedFloat,
   isUnsigindIntWithoutZero,

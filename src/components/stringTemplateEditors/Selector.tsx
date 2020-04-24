@@ -1,5 +1,5 @@
 import React from 'react';
-import { TemplateProps } from '~/modules/canvas/types';
+import { TemplateProps } from '~/modules/data/current';
 import { usePropHandlerCreator } from './utils';
 import Polygon from '~/components/stringTemplateEditors/Polygon';
 import Circle from '~/components/stringTemplateEditors/Circle';

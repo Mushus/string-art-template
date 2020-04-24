@@ -1,6 +1,6 @@
 import React from 'react';
-import { PropsPolygon } from '~/modules/canvas/types';
-import { createAuxiliaryLines } from './utils';
+import { PropsPolygon } from '~/modules/data/current';
+import { createThreads } from './utils';
 import PinDrawer from './PinDrawer';
 import { DrawOptions } from './types';
 
@@ -13,7 +13,7 @@ export default ({
   radius,
   vertexNum,
   pinNum,
-  auxiliaryLines,
+  threads,
 }: Props): JSX.Element => {
   const angle = (2 * Math.PI) / vertexNum;
   const polygonVertexes = new Array(vertexNum)
@@ -34,10 +34,7 @@ export default ({
     }
   });
 
-  const auxiliaryLineAttrsList = createAuxiliaryLines(
-    auxiliaryLines,
-    pinPositions
-  );
+  const threadAttrsList = createThreads(threads, pinPositions);
 
   return (
     <>
@@ -49,7 +46,7 @@ export default ({
       />
 
       <PinDrawer pinPositions={pinPositions} drawOptions={drawOptions} />
-      {auxiliaryLineAttrsList.map(({ points, stroke }, index) => (
+      {threadAttrsList.map(({ points, stroke }, index) => (
         <polyline
           key={index}
           points={points}

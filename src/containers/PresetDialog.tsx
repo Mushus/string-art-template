@@ -3,9 +3,9 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Button from '@material-ui/core/Button';
 import AddIcon from '@material-ui/icons/Add';
 import { useDispatch, useSelector } from 'react-redux';
-import { actions } from '~/modules/canvas';
+import { actions } from '~/modules/editor';
 import { actions as dialogActions } from '~/modules/presetDialog';
-import { TemplateProps } from '~/modules/canvas/types';
+import { TemplateProps } from '~/modules/data/current';
 import styled from '@emotion/styled';
 import { RootState } from '~/reducer';
 import Dialog from '@material-ui/core/Dialog';
@@ -21,7 +21,7 @@ const templates: Array<{ name: string; template: TemplateProps }> = [
       radius: 75,
       pinNum: 24,
       intervalRatio: 1,
-      auxiliaryLines: [
+      threads: [
         {
           color: '#3f51b5',
           patterns: ['5'],
@@ -50,7 +50,7 @@ const templates: Array<{ name: string; template: TemplateProps }> = [
       radius: 75,
       vertexNum: 4,
       pinNum: 20,
-      auxiliaryLines: [
+      threads: [
         {
           color: '#ffc107',
           patterns: ['20', '-20', '1'],
@@ -85,7 +85,7 @@ const templates: Array<{ name: string; template: TemplateProps }> = [
       radius: 75,
       pinNum: 60,
       intervalRatio: 1.8,
-      auxiliaryLines: [
+      threads: [
         {
           color: '#cddc39',
           patterns: ['25', '-24'],
@@ -138,7 +138,7 @@ const templates: Array<{ name: string; template: TemplateProps }> = [
       radius: 75,
       pinNum: 60,
       intervalRatio: 1,
-      auxiliaryLines: [
+      threads: [
         {
           color: '#f44336',
           patterns: ['1+n', '-n'],
@@ -185,7 +185,7 @@ const templates: Array<{ name: string; template: TemplateProps }> = [
       radius: 75,
       pinNum: 60,
       intervalRatio: 1,
-      auxiliaryLines: [
+      threads: [
         {
           color: '#e91e63',
           patterns: ['n', '-n', '1'],
@@ -226,7 +226,7 @@ const templates: Array<{ name: string; template: TemplateProps }> = [
       radius: 75,
       pinNum: 200,
       intervalRatio: 1,
-      auxiliaryLines: [
+      threads: [
         {
           color: '#9c27b0',
           patterns: ['n', '-n', '1'],

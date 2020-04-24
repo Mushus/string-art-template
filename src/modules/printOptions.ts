@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { number } from '@storybook/addon-knobs';
 
 export interface State {
   withPinNumber: boolean;

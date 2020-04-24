@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import styled from '@emotion/styled';
-import AuxiliaryLineColors from '~/constants/auxiliaryLineColors';
+import AuxiliaryLineColors from '~/constants/threadColors';
 import Dialog from '@material-ui/core/Dialog';
 
 const DefaultSize = 40;

@@ -1,23 +1,30 @@
-import canvasModule from '~/modules/canvas';
 import presetDialogModule, {
   State as PresetDialogState,
 } from '~/modules/presetDialog';
-import { State as CanvasState } from '~/modules/canvas/types';
+import pageModule, { State as PageState } from '~/modules/page';
 import printOptionsModule, {
   State as PrintOptionsState,
 } from '~/modules/printOptions';
+import editorModule, { State as EditorState } from '~/modules/editor';
+import threadDialogModule, {
+  State as ThreadDialogState,
+} from '~/modules/threadDialog';
 import { combineReducers } from '@reduxjs/toolkit';
 
 export interface RootState {
-  canvas: CanvasState;
+  page: PageState;
+  editor: EditorState;
   presetDialog: PresetDialogState;
   printOptions: PrintOptionsState;
+  threadDialog: ThreadDialogState;
 }
 
 const rootReducer = combineReducers<RootState>({
-  canvas: canvasModule.reducer,
+  page: pageModule.reducer,
+  editor: editorModule.reducer,
   presetDialog: presetDialogModule.reducer,
   printOptions: printOptionsModule.reducer,
+  threadDialog: threadDialogModule.reducer,
 });
 
 export default rootReducer;

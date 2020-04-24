@@ -46,3 +46,21 @@ html {
   padding: 6px;
   min-width: 24px;
 }
+
+/*
+.active-path {
+  stroke-dasharray: 10000;
+  stroke-dashoffset: 10000;
+  animation: active-path-line 24s linear 0s infinite;
+}
+
+@keyframes active-path-line {
+  0% {
+    stroke-dashoffset: 10000;
+  }
+
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+*/

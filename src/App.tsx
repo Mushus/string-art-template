@@ -6,7 +6,7 @@ import Tab from '@material-ui/core/Tab';
 import Preview from '~/containers/Preview';
 import PageSizeSelector from '~/containers/PageSizeSelector';
 import Editor from '~/containers/Editor';
-import AuxiliaryLineDialog from '~/containers/AuxiliaryLineDialog';
+import ThreadDialog from '~/containers/ThreadDialog';
 import PresetDialog from './containers/PresetDialog';
 import PrintOptions from './containers/PrintOptions';
 
@@ -64,16 +64,6 @@ const PreviewWrap = styled.div`
   }
 `;
 
-const PreviewInner = styled.div`
-  display: inline-block;
-  padding: 100px;
-  @media print {
-    margin: 0;
-    padding: 0;
-    background: transparent;
-  }
-`;
-
 const App = () => {
   const [tab, setTab] = useState(0);
   const handleChangeTab = useCallback((_, tab) => setTab(tab), [tab]);
@@ -91,16 +81,12 @@ const App = () => {
           {tab === 0 && <Editor />}
           {tab === 1 && <PrintOptions />}
         </SideNav>
-        <PreviewWrap>
-          <PreviewInner>
-            <Preview />
-          </PreviewInner>
-        </PreviewWrap>
+        <Preview />
       </Wrapper>
       <PageNav>
         <PageSizeSelector />
       </PageNav>
-      <AuxiliaryLineDialog />
+      <ThreadDialog />
       <PresetDialog />
     </>
   );

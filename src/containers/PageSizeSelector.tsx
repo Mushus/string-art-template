@@ -2,30 +2,36 @@ import React, { useCallback, ChangeEvent } from 'react';
 import PageSizeSelector from '~/components/PageSizeSelector';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '~/reducer';
-import { actions } from '~/modules/canvas';
-import parse from '~/modules/canvas/parseTemplates';
+import { actions as editorActions } from '~/modules/editor';
+import { actions as pageActions, getZooms } from '~/modules/page';
+import { parseData } from '~/modules/data/current';
 
-const selector = (state: RootState) => state.canvas;
+const selector = ({
+  editor: {
+    data: { templates },
+  },
+  page,
+}: RootState) => ({ templates, zooms: getZooms(page) });
 
 const PageSizeSelectorContainer = () => {
-  const { templates, page } = useSelector(selector);
-  const { key, zoomFactor } = page;
+  const { templates, zooms } = useSelector(selector);
+  const { key, zoomFactor } = zooms;
 
   const dispatch = useDispatch();
 
   const onChangeSize = useCallback(
     (e: ChangeEvent<{ value: unknown }>) => {
       const key = String(e.target.value);
-      dispatch(actions.setPage({ key }));
+      dispatch(pageActions.setPage({ key }));
     },
     [dispatch]
   );
 
-  const onClickZoomIn = useCallback(() => dispatch(actions.zoomIn()), [
+  const onClickZoomIn = useCallback(() => dispatch(pageActions.zoomIn()), [
     dispatch,
   ]);
 
-  const onClickZoomOut = useCallback(() => dispatch(actions.zoomOut()), [
+  const onClickZoomOut = useCallback(() => dispatch(pageActions.zoomOut()), [
     dispatch,
   ]);
 
@@ -45,8 +51,9 @@ const PageSizeSelectorContainer = () => {
       reader.onload = () => {
         try {
           const json = reader.result as string;
-          const ary = parse(json);
-          dispatch(actions.updateTemplates(ary));
+          const obj = JSON.parse(json);
+          const data = parseData(obj);
+          dispatch(editorActions.updateData(data));
         } catch (e) {
           console.log(e);
           alert('読み込みに失敗しました');

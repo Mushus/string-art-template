@@ -6,18 +6,18 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import Button from '@material-ui/core/Button';
 import Tooltip from '@material-ui/core/Tooltip';
 import EasyInput from '../EasyInput';
-import { AuxiliaryLine as AuxiliaryLineProps } from '~/modules/canvas/types';
+import { Thread as ThreadProps } from '~/modules/data/current';
 import ColorSelector from '~/components/colorSelector';
 import { isCalcuratableArray } from './utils';
 import { splitCalcuratableArray } from '~/logic';
 
 type Props = {
-  color: AuxiliaryLineProps['color'];
-  patterns: AuxiliaryLineProps['patterns'];
+  color: ThreadProps['color'];
+  patterns: ThreadProps['patterns'];
   onDelete: () => void;
-  onUpdate: <T extends keyof AuxiliaryLineProps>(
+  onUpdate: <T extends keyof ThreadProps>(
     key: T,
-    value: AuxiliaryLineProps[T]
+    value: ThreadProps[T]
   ) => void;
   onOpenDialog: () => void;
 };
@@ -39,7 +39,7 @@ const InputWrapper = styled.div<{ fillWidth?: boolean }>`
       : ''};
 `;
 
-const AuxiliaryLine = ({
+const Thread = ({
   color,
   patterns,
   onDelete,
@@ -111,4 +111,4 @@ const AuxiliaryLine = ({
   );
 };
 
-export default AuxiliaryLine;
+export default Thread;

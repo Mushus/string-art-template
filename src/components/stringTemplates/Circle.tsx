@@ -1,6 +1,6 @@
 import React from 'react';
-import { PropsCircle } from '~/modules/canvas/types';
-import { createAuxiliaryLines } from './utils';
+import { PropsCircle } from '~/modules/data/current';
+import { createThreads } from './utils';
 import PinDrawer from './PinDrawer';
 import { DrawOptions } from './types';
 
@@ -13,7 +13,7 @@ export default ({
   radius,
   pinNum,
   intervalRatio,
-  auxiliaryLines,
+  threads,
 }: Props): JSX.Element => {
   const side = Math.floor((pinNum - 1) / 2);
   const partitionDistance = new Array(pinNum).fill(null).map((_, i) => {
@@ -35,10 +35,7 @@ export default ({
     currentRadius += d * tick;
   });
 
-  const auxiliaryLineAttrsList = createAuxiliaryLines(
-    auxiliaryLines,
-    pinPositions
-  );
+  const threadAttrsList = createThreads(threads, pinPositions);
 
   return (
     <>
@@ -51,7 +48,7 @@ export default ({
         strokeWidth={0.1}
       />
       <PinDrawer pinPositions={pinPositions} drawOptions={drawOptions} />
-      {auxiliaryLineAttrsList.map(({ points, stroke }, index) => (
+      {threadAttrsList.map(({ points, stroke }, index) => (
         <polyline
           key={index}
           points={points}

@@ -4,8 +4,8 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '~/reducer';
-import { actions } from '~/modules/canvas';
-import { AuxiliaryLine } from '~/modules/canvas/types';
+import { actions } from '~/modules/threadDialog';
+import { Thread } from '~/modules/data/current';
 import EasyInput from '~/components/EasyInput';
 import { css } from '@emotion/core';
 import styled from '@emotion/styled';
@@ -13,7 +13,7 @@ import {
   isUnsignedInt,
   isUnsigindIntWithoutZero,
 } from '~/components/stringTemplateEditors/utils';
-import { useAuxiliaryLineUpdator } from './auxiliaryLine';
+import { useThreadUpdator } from './thread';
 
 const InputWrapper = styled.div<{ fillWidth?: boolean }>`
   margin-bottom: 10px;
@@ -25,26 +25,31 @@ const InputWrapper = styled.div<{ fillWidth?: boolean }>`
       : ''};
 `;
 
-const selector = (state: RootState) => state.canvas;
+const selector = ({
+  editor: {
+    data: { templates },
+  },
+  threadDialog,
+}: RootState) => ({
+  templates,
+  threadDialog,
+});
 
 const AuxiliaryLineDialog = () => {
-  const { templates, auxiliaryLineDialog } = useSelector(selector);
+  const { templates, threadDialog } = useSelector(selector);
 
-  const { isOpen, templateIndex, auxiliaryLineIndex } = auxiliaryLineDialog;
+  const { isOpen, templateIndex, threadIndex } = threadDialog;
   const template = templates[templateIndex];
-  let auxiliaryLine: AuxiliaryLine | null = null;
-  if (template && 'auxiliaryLines' in template) {
-    auxiliaryLine = template.auxiliaryLines[auxiliaryLineIndex];
+  let thread: Thread | null = null;
+  if (template && 'threads' in template) {
+    thread = template.threads[threadIndex];
   }
 
   const dispatch = useDispatch();
 
-  const onClose = useCallback(
-    () => dispatch(actions.closeAuxiliaryLineDialog()),
-    [dispatch]
-  );
+  const onClose = useCallback(() => dispatch(actions.close()), [dispatch]);
 
-  const onUpdate = useAuxiliaryLineUpdator(templateIndex, auxiliaryLineIndex);
+  const onUpdate = useThreadUpdator(templateIndex, threadIndex);
 
   const onUpdateStart = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
@@ -65,7 +70,7 @@ const AuxiliaryLineDialog = () => {
   return (
     <Dialog open={isOpen} onClose={onClose}>
       <DialogTitle>糸シミュレーション</DialogTitle>
-      {auxiliaryLine && (
+      {thread && (
         <DialogContent>
           <InputWrapper fillWidth={true}>
             <EasyInput
@@ -73,7 +78,7 @@ const AuxiliaryLineDialog = () => {
               type="number"
               variant="outlined"
               size="small"
-              value={auxiliaryLine.start}
+              value={thread.start}
               placeholder="数値"
               onChange={onUpdateStart}
               validator={isUnsignedInt}
@@ -86,7 +91,7 @@ const AuxiliaryLineDialog = () => {
               type="number"
               variant="outlined"
               size="small"
-              value={auxiliaryLine.loopCount}
+              value={thread.loopCount}
               placeholder="数値"
               onChange={onUpdateLoopCount}
               validator={isUnsigindIntWithoutZero}

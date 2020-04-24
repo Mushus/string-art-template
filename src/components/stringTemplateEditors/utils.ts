@@ -2,7 +2,7 @@ import isInt from 'validator/lib/isInt';
 import isFloat from 'validator/lib/isFloat';
 import { useDispatch } from 'react-redux';
 import { useCallback, ChangeEvent } from 'react';
-import { actions } from '~/modules/canvas';
+import { actions } from '~/modules/editor';
 import { splitCalcuratableArray, createFunctionArray } from '~/logic';
 
 const NumberArrayRegexp = /^\s*-?([1-9][0-9]*|0)(\s*,\s*-?([1-9][0-9]*|0))*\s*$/;

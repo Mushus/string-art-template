@@ -1,4 +1,4 @@
-const AuxiliaryLineColors = [
+const ThreadColors = [
   '#f44336',
   '#e91e63',
   '#9c27b0',
@@ -17,4 +17,4 @@ const AuxiliaryLineColors = [
   '#ff5722',
 ];
 
-export default AuxiliaryLineColors;
+export default ThreadColors;

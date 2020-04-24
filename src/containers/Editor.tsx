@@ -2,16 +2,17 @@ import React, { useCallback, ChangeEvent } from 'react';
 import styled from '@emotion/styled';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '~/reducer';
-import { actions } from '~/modules/canvas';
+import { actions } from '~/modules/editor';
 import { actions as presetDialogActions } from '~/modules/presetDialog';
+import { actions as threadActions } from '~/modules/threadDialog';
 import {
   TemplateProps,
   PropsCircle,
-  AuxiliaryLine,
+  Thread,
   PropsNone,
   PropsPolygon,
   PropsStar,
-} from '~/modules/canvas/types';
+} from '~/modules/data/current';
 import Button from '@material-ui/core/Button';
 import Tooltip from '@material-ui/core/Tooltip';
 import AddIcon from '@material-ui/icons/Add';
@@ -28,7 +29,7 @@ const defaultPropsCircle: PropsCircle = {
   radius: 75,
   pinNum: 24,
   intervalRatio: 1,
-  auxiliaryLines: [],
+  threads: [],
 };
 
 const defaultPropsPolygon: PropsPolygon = {
@@ -36,7 +37,7 @@ const defaultPropsPolygon: PropsPolygon = {
   radius: 75,
   vertexNum: 5,
   pinNum: 5,
-  auxiliaryLines: [],
+  threads: [],
 };
 
 const defaultPropsStar: PropsStar = {
@@ -45,7 +46,7 @@ const defaultPropsStar: PropsStar = {
   innerRadius: 50,
   vertexNum: 5,
   pinNum: 5,
-  auxiliaryLines: [],
+  threads: [],
 };
 
 interface TemplateEditorContainerProps {
@@ -104,28 +105,28 @@ const TemplateEditorContainer = ({
     dispatch(actions.removeShape({ index }));
   }, [index, dispatch]);
 
-  const onAddAuxiliaryLines = useCallback(() => {
-    dispatch(actions.addAuxiliaryLine({ templateIndex: index }));
+  const onAddThreads = useCallback(() => {
+    dispatch(actions.addThread({ templateIndex: index }));
   }, [index, dispatch]);
 
-  const onDeleteAuxiliaryLines = useCallback(
-    (auxiliaryLineIndex: number) => {
+  const onDeleteThreads = useCallback(
+    (threadIndex: number) => {
       dispatch(
-        actions.removeAuxiliaryLine({
+        actions.removeThread({
           templateIndex: index,
-          auxiliaryLineIndex,
+          threadIndex,
         })
       );
     },
     [index, dispatch]
   );
 
-  const onUpdateAuxiliaryLines = useCallback(
-    (auxiliaryLineIndex: number, props: AuxiliaryLine) => {
+  const onUpdateThreads = useCallback(
+    (threadIndex: number, props: Thread) => {
       dispatch(
-        actions.updateAuxiliaryLine({
+        actions.updateThread({
           templateIndex: index,
-          auxiliaryLineIndex,
+          threadIndex,
           props,
         })
       );
@@ -133,12 +134,12 @@ const TemplateEditorContainer = ({
     [index, dispatch]
   );
 
-  const onOpenAuxiliaryLineDialog = useCallback(
-    (auxiliaryLineIndex: number) => {
+  const onOpenThreadDialog = useCallback(
+    (threadIndex: number) => {
       dispatch(
-        actions.openAuxiliaryLineDialog({
+        threadActions.open({
           templateIndex: index,
-          auxiliaryLineIndex,
+          threadIndex,
         })
       );
     },
@@ -150,17 +151,17 @@ const TemplateEditorContainer = ({
       props={props}
       onChangeShape={onChangeShape}
       onDelete={onDelete}
-      onAddAuxiliaryLines={onAddAuxiliaryLines}
-      onDeleteAuxiliaryLines={onDeleteAuxiliaryLines}
-      onUpdateAuxiliaryLines={onUpdateAuxiliaryLines}
-      onOpenAuxiliaryLineDialog={onOpenAuxiliaryLineDialog}
+      onAddThreads={onAddThreads}
+      onDeleteThreads={onDeleteThreads}
+      onUpdateThreads={onUpdateThreads}
+      onOpenThreadDialog={onOpenThreadDialog}
     >
       {children}
     </TemplateEditor>
   );
 };
 
-const selector = ({ canvas }: RootState) => canvas;
+const selector = ({ editor }: RootState) => editor.data;
 
 const Wrapper = styled.div`
   margin: 10px;
