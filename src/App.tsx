@@ -49,21 +49,6 @@ const PageNav = styled.nav`
   ${notPrintable}
 `;
 
-const PreviewWrap = styled.div`
-  flex: 1 1 auto;
-  overflow: auto;
-  box-sizing: border-box;
-  height: 100%;
-  background-color: #eee;
-  @media print {
-    margin: 0;
-    padding: 0;
-    width: auto;
-    height: auto;
-    background: transparent;
-  }
-`;
-
 const App = () => {
   const [tab, setTab] = useState(0);
   const handleChangeTab = useCallback((_, tab) => setTab(tab), [tab]);

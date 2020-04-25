@@ -69,7 +69,7 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-redux": "^7.2.0",
-    "reselect": "^4.0.0",
+    "reselect-map": "^1.0.5",
     "validator": "^13.0.0"
   }
 }

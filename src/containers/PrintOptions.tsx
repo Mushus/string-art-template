@@ -21,11 +21,16 @@ const ControlWapper = styled.div`
 `;
 
 const PrintOptions = () => {
-  const { withPinNumber, pinSize } = useSelector(selector);
+  const { withPinNumber, pinSize, withProcedure } = useSelector(selector);
   const dispatch = useDispatch();
 
   const handleChangeWithPinNumber = useCallback(
     (_, checked: boolean) => dispatch(actions.updateWithPinNumber(checked)),
+    [dispatch]
+  );
+
+  const handleChangeWithProcedure = useCallback(
+    (_, checked: boolean) => dispatch(actions.updateProcedure(checked)),
     [dispatch]
   );
 
@@ -46,6 +51,17 @@ const PrintOptions = () => {
             />
           }
           label="ピン番号を表示する"
+        />
+      </ControlWapper>
+      <ControlWapper>
+        <FormControlLabel
+          control={
+            <Switch
+              checked={withProcedure}
+              onChange={handleChangeWithProcedure}
+            />
+          }
+          label="糸シミュレーションの手順を表示する"
         />
       </ControlWapper>
       <ControlWapper>

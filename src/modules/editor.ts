@@ -1,6 +1,13 @@
 import { TemplateProps, Data, Thread } from '~/modules/data/current';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import ThreadColors from '~/constants/threadColors';
+import { createArraySelector } from 'reselect-map';
+import {
+  generateCircleTemplate,
+  generatePolygonTemplate,
+  generateStarTemplate,
+} from './editor/templateGenerator';
+import ShapeTemplates from '~/constants/shapeTemplates';
 
 export interface State {
   data: Data;
@@ -92,3 +99,35 @@ const editorModule = createSlice({
 export const actions = editorModule.actions;
 
 export default editorModule;
+
+export const getTemplates = createArraySelector(
+  [(state: State) => state.data.templates],
+  (template) => {
+    switch (template.type) {
+      case 'none':
+        return template;
+      case 'circle':
+        return {
+          ...template,
+          ...generateCircleTemplate(template),
+          name: getShapeName(template),
+        };
+      case 'polygon':
+        return {
+          ...template,
+          ...generatePolygonTemplate(template),
+          name: getShapeName(template),
+        };
+      case 'star':
+        return {
+          ...template,
+          ...generateStarTemplate(template),
+          name: getShapeName(template),
+        };
+    }
+  }
+);
+
+const getShapeName = (template: TemplateProps) => {
+  return ShapeTemplates.find((s) => s.key === template.type)?.name || '';
+};
