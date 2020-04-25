@@ -3,12 +3,14 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 export interface State {
   withPinNumber: boolean;
   withProcedure: boolean;
+  withParams: boolean;
   pinSize: number;
 }
 
 const initialState: State = {
   withPinNumber: true,
   withProcedure: false,
+  withParams: false,
   pinSize: 0.3,
 };
 
@@ -22,8 +24,11 @@ const printOptionsModule = createSlice({
     updatePinSize(state, actions: PayloadAction<number>) {
       state.pinSize = actions.payload;
     },
-    updateProcedure(state, actions: PayloadAction<boolean>) {
+    updateWithProcedure(state, actions: PayloadAction<boolean>) {
       state.withProcedure = actions.payload;
+    },
+    updateWithParams(state, actions: PayloadAction<boolean>) {
+      state.withParams = actions.payload;
     },
   },
 });

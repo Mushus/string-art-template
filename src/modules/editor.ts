@@ -1,4 +1,12 @@
-import { TemplateProps, Data, Thread } from '~/modules/data/current';
+import {
+  TemplateProps,
+  Data,
+  Thread,
+  PropsNone,
+  PropsCircle,
+  PropsPolygon,
+  PropsStar,
+} from '~/modules/data/current';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import ThreadColors from '~/constants/threadColors';
 import { createArraySelector } from 'reselect-map';
@@ -6,6 +14,7 @@ import {
   generateCircleTemplate,
   generatePolygonTemplate,
   generateStarTemplate,
+  ThreadDetail,
 } from './editor/templateGenerator';
 import ShapeTemplates from '~/constants/shapeTemplates';
 
@@ -19,7 +28,7 @@ const initialState: State = {
       {
         type: 'circle',
         radius: 75,
-        pinNum: 24,
+        pinNum: 23,
         intervalRatio: 1,
         threads: [],
       },
@@ -100,9 +109,33 @@ export const actions = editorModule.actions;
 
 export default editorModule;
 
+export type TemplateDetailNone = PropsNone;
+export type TempalteDetailCircle = Omit<PropsCircle, 'threads'> & {
+  name: string;
+  pinPositions: [number, number][];
+  threads: ThreadDetail[];
+};
+export type TempalteDetailPolygon = Omit<PropsPolygon, 'threads'> & {
+  name: string;
+  pinPositions: [number, number][];
+  polygonVertexes: [number, number][];
+  threads: ThreadDetail[];
+};
+export type TempalteDetailStar = Omit<PropsStar, 'threads'> & {
+  name: string;
+  pinPositions: [number, number][];
+  polygonVertexes: [number, number][];
+  threads: ThreadDetail[];
+};
+export type TemplateDetail =
+  | TemplateDetailNone
+  | TempalteDetailCircle
+  | TempalteDetailPolygon
+  | TempalteDetailStar;
+
 export const getTemplates = createArraySelector(
   [(state: State) => state.data.templates],
-  (template) => {
+  (template): TemplateDetail => {
     switch (template.type) {
       case 'none':
         return template;

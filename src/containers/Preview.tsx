@@ -6,6 +6,8 @@ import Selector from '~/components/stringTemplates/Selector';
 import styled from '@emotion/styled';
 import { getZooms } from '~/modules/page';
 import { getTemplates } from '~/modules/editor';
+import ThreadColor from '~/components/ThreadColor';
+import TemplateParams from '~/components/TemplateParams';
 
 export const chunked = <T extends any>(ary: Array<T>, size: number) => {
   const result: T[][] = [];
@@ -48,6 +50,7 @@ const Zoomer = styled.div<{ zoomFactor: number }>`
 `;
 
 const Page = styled.div<{ width: number; height: number }>`
+  position: relative;
   width: ${({ width }) => width}mm;
   height: ${({ height }) => height - 1}mm;
   border: 1px solid #ccc;
@@ -65,17 +68,29 @@ const Page = styled.div<{ width: number; height: number }>`
   }
 `;
 
-const PageMargin = styled.div`
-  margin: 20mm;
+const Position = styled.div<{
+  top?: number;
+  bottom?: number;
+  left?: number;
+  right?: number;
+  width?: number;
+  height?: number;
+}>`
+  position: absolute;
+  top: ${({ top }) => (top != null ? `${top}mm` : 'unset')};
+  bottom: ${({ bottom }) => (bottom != null ? `${bottom}mm` : 'unset')};
+  left: ${({ left }) => (left != null ? `${left}mm` : 'unset')};
+  right: ${({ right }) => (right != null ? `${right}mm` : 'unset')};
+  width: ${({ width }) => (width != null ? `${width}mm` : 'unset')};
+  height: ${({ height }) => (height != null ? `${height}mm` : 'unset')};
 `;
 
-const ThreadColor = styled.div<{ color: string }>`
-  background-color: ${({ color }) => color};
-  display: inline-block;
-  width: 0.7em;
-  height: 0.7em;
-  border: 1px solid black;
-  margin: 0 10px;
+const TemplateParamsWrapper = styled.div`
+  margin-bottom: 2mm;
+`;
+
+const PageMargin = styled.div`
+  margin: 20mm;
 `;
 
 const Table = styled.table`
@@ -109,7 +124,7 @@ const selector = ({ page, printOptions, editor }: RootState) => ({
 
 const Preview = () => {
   const { zooms, printOptions, templates } = useSelector(selector);
-  const { withPinNumber, withProcedure, pinSize } = printOptions;
+  const { withPinNumber, withProcedure, withParams, pinSize } = printOptions;
   const { width, height, zoomFactor } = zooms;
   const drawOptions = useMemo(() => ({ withPinNumber, pinSize }), [
     withPinNumber,
@@ -129,18 +144,27 @@ const Preview = () => {
               <Selector key={i} drawOptions={drawOptions} {...props} />
             ))}
           </Canvas>
+          {withParams && (
+            <Position top={10} left={10} width={50}>
+              {templates.map((template, i) => (
+                <TemplateParamsWrapper key={i}>
+                  <TemplateParams template={template} />
+                </TemplateParamsWrapper>
+              ))}
+            </Position>
+          )}
         </Page>
         {withProcedure &&
           templates.map((props, i) => {
             if (!('threads' in props)) return;
-            return props.threads.map((pinNumbers, k) => (
+            return props.threads.map((thread, k) => (
               <Page key={k} width={width} height={height}>
                 <PageMargin>
                   <h1>手順</h1>
                   <h2>
                     {props.name}
                     {i} 糸{k}
-                    <ThreadColor color={pinNumbers.color} />
+                    <ThreadColor color={thread.color} />
                   </h2>
                   <p>表は左上から横に読みます。</p>
                   <p>テンプレートの対応する数字のピンに紐を掛けます。</p>
@@ -149,16 +173,14 @@ const Preview = () => {
                       <TableRow>{headers}</TableRow>
                     </thead>
                     <tbody>
-                      {chunked(pinNumbers.pinIndexes, chunkSize).map(
-                        (row, i) => (
-                          <TableRow key={i}>
-                            <TableHead>{i * chunkSize}</TableHead>
-                            {row.map((data, i) => (
-                              <TableData key={i}>{data}</TableData>
-                            ))}
-                          </TableRow>
-                        )
-                      )}
+                      {chunked(thread.pinIndexes, chunkSize).map((row, i) => (
+                        <TableRow key={i}>
+                          <TableHead>{i * chunkSize}</TableHead>
+                          {row.map((data, i) => (
+                            <TableData key={i}>{data}</TableData>
+                          ))}
+                        </TableRow>
+                      ))}
                     </tbody>
                   </Table>
                   {/*

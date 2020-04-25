@@ -6,6 +6,11 @@ import {
 } from '~/modules/data/current';
 import { createFunctionArray } from '~/logic';
 
+export type ThreadDetail = Thread & {
+  pinIndexes: number[];
+  pinShifts: number[];
+};
+
 const normalizePinNumber = (threadNumber: number, pinCount: number) => {
   while (threadNumber < 0) {
     threadNumber += pinCount;
@@ -85,7 +90,7 @@ export const generateCircleTemplate = ({
     });
   }
 
-  const threadsCalc = threads.map((thread) => ({
+  const threadsCalc = threads.map<ThreadDetail>((thread) => ({
     ...thread,
     ...createThreadMovement(thread, pinPositions.length),
   }));
@@ -116,7 +121,7 @@ export const generatePolygonTemplate = ({
     }
   });
 
-  const threadsCalc = threads.map((thread) => ({
+  const threadsCalc = threads.map<ThreadDetail>((thread) => ({
     ...thread,
     ...createThreadMovement(thread, pinPositions.length),
   }));
@@ -148,7 +153,7 @@ export const generateStarTemplate = ({
     }
   });
 
-  const threadsCalc = threads.map((thread) => ({
+  const threadsCalc = threads.map<ThreadDetail>((thread) => ({
     ...thread,
     ...createThreadMovement(thread, pinPositions.length),
   }));

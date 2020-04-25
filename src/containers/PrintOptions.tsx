@@ -21,7 +21,9 @@ const ControlWapper = styled.div`
 `;
 
 const PrintOptions = () => {
-  const { withPinNumber, pinSize, withProcedure } = useSelector(selector);
+  const { withPinNumber, pinSize, withProcedure, withParams } = useSelector(
+    selector
+  );
   const dispatch = useDispatch();
 
   const handleChangeWithPinNumber = useCallback(
@@ -30,7 +32,12 @@ const PrintOptions = () => {
   );
 
   const handleChangeWithProcedure = useCallback(
-    (_, checked: boolean) => dispatch(actions.updateProcedure(checked)),
+    (_, checked: boolean) => dispatch(actions.updateWithProcedure(checked)),
+    [dispatch]
+  );
+
+  const handleChangeWithParams = useCallback(
+    (_, checked: boolean) => dispatch(actions.updateWithParams(checked)),
     [dispatch]
   );
 
@@ -61,9 +68,18 @@ const PrintOptions = () => {
               onChange={handleChangeWithProcedure}
             />
           }
-          label="糸シミュレーションの手順を表示する"
+          label="糸掛け手順ページを追加する"
         />
       </ControlWapper>
+      <ControlWapper>
+        <FormControlLabel
+          control={
+            <Switch checked={withParams} onChange={handleChangeWithParams} />
+          }
+          label="図形パラメータを表示する"
+        />
+      </ControlWapper>
+
       <ControlWapper>
         <TextField
           label="ピンの大きさ"
