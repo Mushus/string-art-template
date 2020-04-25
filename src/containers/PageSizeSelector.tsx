@@ -3,7 +3,7 @@ import PageSizeSelector from '~/components/PageSizeSelector';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '~/reducer';
 import { actions as editorActions } from '~/modules/editor';
-import { actions as pageActions, getZooms } from '~/modules/page';
+import { actions as pageActions, getPages } from '~/modules/page';
 import { parseData } from '~/modules/data/current';
 
 const selector = ({
@@ -11,11 +11,11 @@ const selector = ({
     data: { templates },
   },
   page,
-}: RootState) => ({ templates, zooms: getZooms(page) });
+}: RootState) => ({ templates, page: getPages(page) });
 
 const PageSizeSelectorContainer = () => {
-  const { templates, zooms } = useSelector(selector);
-  const { key, zoomFactor } = zooms;
+  const { templates, page } = useSelector(selector);
+  const { key, zoomFactor } = page;
 
   const dispatch = useDispatch();
 

@@ -42,11 +42,12 @@ export default pageModules;
 
 export const actions = pageModules.actions;
 
-export const getZooms = createSelector(
+export const getPages = createSelector(
   [(state: State) => state.key, (state: State) => state.zoom],
   (key, zoom) => ({
     key,
     zoom,
+    css: PageSize[key].css,
     width: PageSize[key].width,
     height: PageSize[key].height,
     zoomFactor: ZoomFactors[zoom],

@@ -1,13 +1,15 @@
-import React, { useMemo, Fragment } from 'react';
+import React, { useMemo, Fragment, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '~/reducer';
 import Canvas from '~/components/Canvas';
 import Selector from '~/components/stringTemplates/Selector';
 import styled from '@emotion/styled';
-import { getZooms } from '~/modules/page';
+import { getPages } from '~/modules/page';
 import { getTemplates } from '~/modules/editor';
 import ThreadColor from '~/components/ThreadColor';
 import TemplateParams from '~/components/TemplateParams';
+
+const PrintStyleId = 'printStyle';
 
 export const chunked = <T extends any>(ary: Array<T>, size: number) => {
   const result: T[][] = [];
@@ -91,7 +93,7 @@ const TemplateParamsWrapper = styled.div`
 `;
 
 const PageMargin = styled.div`
-  margin: 20mm;
+  padding: 20mm;
 `;
 
 const Table = styled.table`
@@ -118,15 +120,15 @@ const TableData = styled.td`
 `;
 
 const selector = ({ page, printOptions, editor }: RootState) => ({
-  zooms: getZooms(page),
+  page: getPages(page),
   templates: getTemplates(editor),
   printOptions,
 });
 
 const Preview = () => {
-  const { zooms, printOptions, templates } = useSelector(selector);
+  const { page, printOptions, templates } = useSelector(selector);
   const { withPinNumber, withProcedure, withParams, pinSize } = printOptions;
-  const { width, height, zoomFactor } = zooms;
+  const { width, height, zoomFactor } = page;
   const drawOptions = useMemo(() => ({ withPinNumber, pinSize }), [
     withPinNumber,
     pinSize,
@@ -136,6 +138,16 @@ const Preview = () => {
   for (let i = 1; i <= chunkSize; i++) {
     headers[i] = <TableHead key={i}>{i}</TableHead>;
   }
+
+  useEffect(() => {
+    let style = document.getElementById(PrintStyleId);
+    if (!style) {
+      style = document.createElement('style');
+      style.id = PrintStyleId;
+      document.head.appendChild(style);
+    }
+    style.innerHTML = `@media print{@page{size: ${page.css};}}`;
+  }, [page.css]);
   return (
     <Wapper>
       <Zoomer zoomFactor={zoomFactor}>
