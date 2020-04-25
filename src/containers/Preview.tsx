@@ -31,6 +31,7 @@ const Wapper = styled.div`
     width: auto;
     height: auto;
     background: transparent;
+    overflow: visible;
   }
 `;
 const Zoomer = styled.div<{ zoomFactor: number }>`
