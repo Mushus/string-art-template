@@ -1,4 +1,4 @@
-import React, { useMemo, Fragment, useEffect } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '~/reducer';
 import Canvas from '~/components/Canvas';

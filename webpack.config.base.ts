@@ -1,13 +1,16 @@
 import path from 'path';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
-import ScriptExtHtmlWebpackPlugin from 'script-ext-html-webpack-plugin';
+import WorkboxWebpackPlugin from 'workbox-webpack-plugin';
+import WebpackPwaManifest from 'webpack-pwa-manifest';
 import { Configuration } from 'webpack';
+
+const outputPath = path.join(__dirname, 'docs');
 
 const config: Configuration = {
   mode: 'production',
   entry: './src/index.tsx',
   output: {
-    path: path.join(__dirname, 'docs'),
+    path: outputPath,
     filename: 'main.js',
   },
   module: {
@@ -40,8 +43,23 @@ const config: Configuration = {
       title: 'React Boilerplate',
       multiStep: true,
     }),
-    new ScriptExtHtmlWebpackPlugin({
-      defaultAttribute: 'async',
+    new WebpackPwaManifest({
+      name: '糸掛けテンプレート',
+      short_name: '糸掛け',
+      description: '糸掛け用のテンプレートを作成します',
+      background_color: '#fff',
+      display: 'standalone',
+      icons: [
+        {
+          src: path.resolve('src/assets/icon.png'),
+          sizes: [512],
+        },
+      ],
+    }),
+    new WorkboxWebpackPlugin.GenerateSW({
+      swDest: path.join(outputPath, 'sw.js'),
+      clientsClaim: true,
+      skipWaiting: true,
     }),
   ],
 };

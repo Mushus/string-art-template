@@ -9,6 +9,19 @@ import reducer from '~/reducer';
 import theme from '~/theme';
 import { MuiThemeProvider } from '@material-ui/core';
 
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker
+      .register('sw.js')
+      .then((registration) => {
+        console.log('SW registered: ', registration);
+      })
+      .catch((registrationError) => {
+        console.log('SW registration failed: ', registrationError);
+      });
+  });
+}
+
 const store = createStore(reducer);
 
 ReactDOM.render(
