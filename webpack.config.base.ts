@@ -49,12 +49,15 @@ const config: Configuration = {
       description: '糸掛け用のテンプレートを作成します',
       background_color: '#fff',
       display: 'standalone',
+      orientation: 'landscape',
       icons: [
         {
           src: path.resolve('src/assets/icon.png'),
           sizes: [512],
         },
       ],
+      inject: true,
+      ios: true,
     }),
     new WorkboxWebpackPlugin.GenerateSW({
       swDest: path.join(outputPath, 'sw.js'),

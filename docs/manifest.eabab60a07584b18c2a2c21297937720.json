@@ -1,0 +1,16 @@
+{
+  "icons": [
+    {
+      "src": "icon_512x512.9cc1b3d70d7efee57427a6cdca1835c1.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "name": "糸掛けテンプレート",
+  "short_name": "糸掛け",
+  "orientation": "landscape",
+  "display": "standalone",
+  "start_url": ".",
+  "description": "糸掛け用のテンプレートを作成します",
+  "background_color": "#fff"
+}
