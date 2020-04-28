@@ -8,23 +8,23 @@ import { actions as threadActions } from '~/modules/threadDialog';
 import {
   TemplateProps,
   PropsCircle,
-  Thread,
   PropsNone,
   PropsPolygon,
   PropsStar,
-} from '~/modules/data/current';
+  ThreadProps,
+} from '~/modules/data/internal';
 import Button from '@material-ui/core/Button';
 import Tooltip from '@material-ui/core/Tooltip';
 import AddIcon from '@material-ui/icons/Add';
 import FavoriteIcon from '@material-ui/icons/Favorite';
-import Selector from '~/components/stringTemplateEditors/Selector';
+import Selector from '~/components/threadTemplateEditors/Selector';
 import TemplateEditor from '~/components/TemplateEditor';
 
-const defaultPropsNone: PropsNone = {
+const defaultPropsNone: Omit<PropsNone, 'id'> = {
   type: 'none',
 };
 
-const defaultPropsCircle: PropsCircle = {
+const defaultPropsCircle: Omit<PropsCircle, 'id'> = {
   type: 'circle',
   radius: 75,
   pinNum: 24,
@@ -32,7 +32,7 @@ const defaultPropsCircle: PropsCircle = {
   threads: [],
 };
 
-const defaultPropsPolygon: PropsPolygon = {
+const defaultPropsPolygon: Omit<PropsPolygon, 'id'> = {
   type: 'polygon',
   radius: 75,
   vertexNum: 5,
@@ -40,7 +40,7 @@ const defaultPropsPolygon: PropsPolygon = {
   threads: [],
 };
 
-const defaultPropsStar: PropsStar = {
+const defaultPropsStar: Omit<PropsStar, 'id'> = {
   type: 'star',
   outerRadius: 75,
   innerRadius: 50,
@@ -50,18 +50,18 @@ const defaultPropsStar: PropsStar = {
 };
 
 interface TemplateEditorContainerProps {
-  index: number;
   props: TemplateProps;
+  threads: { [k: string]: ThreadProps };
   children?: React.ReactNode;
 }
 
 const TemplateEditorContainer = ({
-  index,
   props,
+  threads,
   children,
 }: TemplateEditorContainerProps) => {
   const dispatch = useDispatch();
-  const { type } = props;
+  const { id, type } = props;
 
   const onChangeShape = useCallback(
     (e: ChangeEvent<{ value: unknown }>) => {
@@ -69,86 +69,56 @@ const TemplateEditorContainer = ({
       if (value === type) return;
       switch (value) {
         case 'circle':
-          return dispatch(
-            actions.updateShape({
-              index,
-              props: { ...defaultPropsCircle },
-            })
-          );
+          return dispatch(actions.updateShape({ id, ...defaultPropsCircle }));
         case 'polygon':
-          return dispatch(
-            actions.updateShape({
-              index,
-              props: { ...defaultPropsPolygon },
-            })
-          );
+          return dispatch(actions.updateShape({ id, ...defaultPropsPolygon }));
         case 'star':
-          return dispatch(
-            actions.updateShape({
-              index,
-              props: { ...defaultPropsStar },
-            })
-          );
+          return dispatch(actions.updateShape({ id, ...defaultPropsStar }));
         default:
-          return dispatch(
-            actions.updateShape({
-              index,
-              props: defaultPropsNone,
-            })
-          );
+          return dispatch(actions.updateShape({ id, ...defaultPropsNone }));
       }
     },
-    [index, type, dispatch]
+    [id, type, dispatch]
   );
 
   const onDelete = useCallback(() => {
-    dispatch(actions.removeShape({ index }));
-  }, [index, dispatch]);
+    dispatch(actions.removeShape(id));
+  }, [id, dispatch]);
 
   const onAddThreads = useCallback(() => {
-    dispatch(actions.addThread({ templateIndex: index }));
-  }, [index, dispatch]);
+    dispatch(actions.addThread({ templateID: id }));
+  }, [id, dispatch]);
 
   const onDeleteThreads = useCallback(
-    (threadIndex: number) => {
+    (threadID: string) => {
       dispatch(
         actions.removeThread({
-          templateIndex: index,
-          threadIndex,
+          templateID: id,
+          threadID,
         })
       );
     },
-    [index, dispatch]
+    [id, dispatch]
   );
 
   const onUpdateThreads = useCallback(
-    (threadIndex: number, props: Thread) => {
-      dispatch(
-        actions.updateThread({
-          templateIndex: index,
-          threadIndex,
-          props,
-        })
-      );
+    (props: ThreadProps) => {
+      dispatch(actions.updateThread(props));
     },
-    [index, dispatch]
+    [dispatch]
   );
 
   const onOpenThreadDialog = useCallback(
-    (threadIndex: number) => {
-      dispatch(
-        threadActions.open({
-          templateIndex: index,
-          threadIndex,
-        })
-      );
+    (id: string) => {
+      dispatch(threadActions.open(id));
     },
-    [index, dispatch]
+    [dispatch]
   );
 
   return (
     <TemplateEditor
       props={props}
+      threads={threads}
       onChangeShape={onChangeShape}
       onDelete={onDelete}
       onAddThreads={onAddThreads}
@@ -160,8 +130,6 @@ const TemplateEditorContainer = ({
     </TemplateEditor>
   );
 };
-
-const selector = ({ editor }: RootState) => editor.data;
 
 const Wrapper = styled.div`
   margin: 10px;
@@ -176,8 +144,16 @@ const ButtonWrapper = styled.div`
 
 const Editor = styled.div``;
 
+const selector = ({
+  editor: { templates, templateIDs, threads },
+}: RootState) => ({
+  templates,
+  threads,
+  templateIDs,
+});
+
 const EditorContainer = () => {
-  const { templates } = useSelector(selector);
+  const { templateIDs, templates, threads } = useSelector(selector);
   const dispatch = useDispatch();
 
   const handleClickAdd = useCallback(() => dispatch(actions.addShape()), [
@@ -218,11 +194,14 @@ const EditorContainer = () => {
         </ButtonWrapper>
       </Controller>
       <Editor>
-        {templates.map((props, index) => (
-          <TemplateEditorContainer key={index} index={index} props={props}>
-            <Selector index={index} props={props} />
-          </TemplateEditorContainer>
-        ))}
+        {templateIDs.map((id) => {
+          const props = templates[id];
+          return (
+            <TemplateEditorContainer key={id} props={props} threads={threads}>
+              <Selector props={props} />
+            </TemplateEditorContainer>
+          );
+        })}
       </Editor>
     </Wrapper>
   );

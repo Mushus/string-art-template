@@ -4,33 +4,23 @@ import { Thread } from '~/modules/data/current';
 import { RootState } from '~/reducer';
 import { useSelector, useDispatch } from 'react-redux';
 
-const selector = (state: RootState) => state.editor.data;
+const selector = (state: RootState) => state.editor.threads;
 
-export const useThreadUpdator = (
-  templateIndex: number,
-  threadIndex: number
-) => {
-  const { templates } = useSelector(selector);
-
-  const template = templates[templateIndex];
-  let thread: Thread | null = null;
-  if (template && 'threads' in template) {
-    thread = template.threads[threadIndex];
-  }
-
+export const useThreadUpdator = (id: string) => {
+  const threads = useSelector(selector);
+  const thread = threads[id];
   const dispatch = useDispatch();
   const onUpdate = useCallback(
     <T extends keyof Thread>(key: T, value: Thread[T]) => {
       if (!thread) return;
       dispatch(
         actions.updateThread({
-          templateIndex,
-          threadIndex,
-          props: { ...thread, [key]: value },
+          ...thread,
+          [key]: value,
         })
       );
     },
-    [templateIndex, threadIndex, thread, dispatch]
+    [thread, dispatch]
   );
   return onUpdate;
 };

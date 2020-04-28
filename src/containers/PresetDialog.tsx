@@ -321,7 +321,7 @@ const PresetDialog = () => {
     () =>
       templates.map((t) => ({
         name: t.name,
-        handler: () => dispatch(actions.addShape({ props: t.template })),
+        handler: () => dispatch(actions.addShape(t.template)),
       })),
     [dispatch, templates]
   );

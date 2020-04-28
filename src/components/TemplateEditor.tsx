@@ -8,8 +8,8 @@ import Button from '@material-ui/core/Button';
 import Tooltip from '@material-ui/core/Tooltip';
 import ShapeTemplates from '~/constants/shapeTemplates';
 import styled from '@emotion/styled';
-import { TemplateProps, Thread as ThreadProps } from '~/modules/data/current';
-import Thread from '~/components/stringTemplateEditors/Thread';
+import { TemplateProps, ThreadProps } from '~/modules/data/internal';
+import Thread from '~/components/threadTemplateEditors/Thread';
 
 const Wrapper = styled.div`
   display: flex;
@@ -49,18 +49,20 @@ const ThreadsWrapper = styled.div`
 
 interface Props {
   props: TemplateProps;
+  threads: { [k: string]: ThreadProps };
   onChangeShape: (event: ChangeEvent<{ value: unknown }>) => void;
   onDelete: () => void;
   onAddThreads: () => void;
-  onDeleteThreads: (index: number) => void;
-  onUpdateThreads: (index: number, props: ThreadProps) => void;
-  onOpenThreadDialog: (auxiliaryLineIndex: number) => void;
+  onDeleteThreads: (id: string) => void;
+  onUpdateThreads: (props: ThreadProps) => void;
+  onOpenThreadDialog: (id: string) => void;
   children?: React.ReactNode;
 }
 
 const shapeLabel = '形状';
 const TemplateEditor = ({
   props,
+  threads,
   onChangeShape,
   onDelete,
   onAddThreads,
@@ -117,22 +119,24 @@ const TemplateEditor = ({
             </Tooltip>
             <FooterTitle>糸シミュレーション</FooterTitle>
           </FooterController>
-          {props.threads.map((lines, index) => {
-            const onDelete = () => onDeleteThreads(index);
+          {props.threads.map((threadID) => {
+            const thread = threads[threadID];
+            const { color, patterns } = thread;
+            const onDelete = () => onDeleteThreads(threadID);
             const onUpdate = <T extends keyof ThreadProps>(
               key: T,
               value: ThreadProps[T]
             ) => {
-              onUpdateThreads(index, { ...lines, [key]: value });
+              onUpdateThreads({ ...thread, [key]: value });
             };
             const onOpenDialog = () => {
-              onOpenThreadDialog(index);
+              onOpenThreadDialog(threadID);
             };
             return (
-              <ThreadsWrapper key={index}>
+              <ThreadsWrapper key={threadID}>
                 <Thread
-                  color={lines.color}
-                  patterns={lines.patterns}
+                  color={color}
+                  patterns={patterns}
                   onDelete={onDelete}
                   onUpdate={onUpdate}
                   onOpenDialog={onOpenDialog}

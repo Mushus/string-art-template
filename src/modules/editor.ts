@@ -1,106 +1,159 @@
-import {
-  TemplateProps,
-  Data,
-  Thread,
-  PropsNone,
-  PropsCircle,
-  PropsPolygon,
-  PropsStar,
-} from '~/modules/data/current';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import ThreadColors from '~/constants/threadColors';
-import { createArraySelector } from 'reselect-map';
 import {
-  generateCircleTemplate,
-  generatePolygonTemplate,
-  generateStarTemplate,
-  ThreadDetail,
-} from './editor/templateGenerator';
-import ShapeTemplates from '~/constants/shapeTemplates';
+  TemplateProps,
+  ThreadProps,
+  loadFileResult,
+  PropsCircle,
+  PropsNone,
+  PropsPolygon,
+  PropsStar,
+} from '~/modules/data/internal';
+import { TemplateProps as TemplatePropsSavedata } from '~/modules/data/current';
+
+export interface ThreadUI {
+  isActive: boolean;
+}
+
+export interface TemplateUI {
+  isActive: boolean;
+}
 
 export interface State {
-  data: Data;
+  templateIDs: string[];
+  templates: { [k: string]: TemplateProps };
+  templateUIs: { [k: string]: TemplateUI };
+  templateLastID: number;
+  threads: { [k: string]: ThreadProps };
+  threadUIs: { [k: string]: ThreadUI };
+  threadLastID: number;
 }
+
 const initialState: State = {
-  data: {
-    version: 1,
-    templates: [
-      {
-        type: 'circle',
-        radius: 75,
-        pinNum: 23,
-        intervalRatio: 1,
-        threads: [],
-      },
-    ],
+  templateIDs: ['0'],
+  templates: {
+    '0': {
+      id: '0',
+      type: 'circle',
+      radius: 75,
+      pinNum: 23,
+      intervalRatio: 1,
+      threads: [],
+    },
   },
+  templateUIs: {
+    '0': {
+      isActive: false,
+    },
+  },
+  templateLastID: 0,
+  threads: {},
+  threadUIs: {},
+  threadLastID: 0,
 };
 
 const editorModule = createSlice({
   name: 'editor',
   initialState,
   reducers: {
-    updateData(state: State, action: PayloadAction<Data>) {
-      state.data = action.payload;
+    updateFromFile(state: State, action: PayloadAction<loadFileResult>) {
+      const { templates, templateIDs, threads } = action.payload;
+      state.templates = templates;
+      state.templateIDs = templateIDs;
+      state.threads = threads;
+      state.templateUIs = Object.fromEntries(
+        Object.keys(templates).map((i) => [i, { isActive: false }])
+      );
+      state.threadUIs = Object.fromEntries(
+        Object.keys(threads).map((i) => [i, { isActive: false }])
+      );
+      state.templateLastID = Math.max(
+        0,
+        ...Object.keys(state.templates).map((i) => Number(i))
+      );
+      state.threadLastID = Math.max(
+        0,
+        ...Object.keys(state.threads).map((i) => Number(i))
+      );
     },
+
     addShape(
       state: State,
-      action: PayloadAction<{ props: TemplateProps } | undefined>
+      action: PayloadAction<TemplatePropsSavedata | undefined>
     ) {
-      state.data.templates.push(action.payload?.props ?? { type: 'none' });
+      const id = String(++state.templateLastID);
+      let template: TemplateProps = { type: 'none', id };
+      const savedata = action.payload;
+      if (savedata && 'threads' in savedata) {
+        const threads: string[] = [];
+        savedata.threads.forEach((thread) => {
+          const threadID = String(++state.threadLastID);
+          state.threads[threadID] = {
+            id: threadID,
+            ...thread,
+          };
+          state.threadUIs[threadID] = {
+            isActive: true,
+          };
+          threads.push(threadID);
+        });
+        const { threads: _, ...savedataOmitThread } = savedata;
+        template = { ...savedataOmitThread, id, threads };
+      }
+      state.templates[id] = template;
+      state.templateUIs[id] = { isActive: false };
+      state.templateIDs.push(id);
     },
 
-    updateShape(
-      state: State,
-      action: PayloadAction<{ index: number; props: TemplateProps }>
-    ) {
-      const { index, props } = action.payload;
-      state.data.templates[index] = props;
+    updateShape(state: State, action: PayloadAction<TemplateProps>) {
+      const props = action.payload;
+      const { id } = props;
+      state.templates[id] = props;
     },
 
-    removeShape(state: State, action: PayloadAction<{ index: number }>) {
-      const { index } = action.payload;
-      state.data.templates.splice(index, 1);
+    removeShape(state: State, action: PayloadAction<string>) {
+      const id = action.payload;
+      state.templateIDs = state.templateIDs.filter((current) => current !== id);
     },
 
-    addThread(state: State, action: PayloadAction<{ templateIndex: number }>) {
-      const { templateIndex } = action.payload;
-      const shape = state.data.templates[templateIndex];
-      if (!shape || !('threads' in shape)) return;
+    addThread(state: State, action: PayloadAction<{ templateID: string }>) {
+      const { templateID } = action.payload;
+      const template = state.templates[templateID];
+      if (!template || !('threads' in template)) return;
       const threadColorIndex = Math.floor(Math.random() * ThreadColors.length);
-      shape.threads.push({
+      const threadID = String(++state.threadLastID);
+      state.threads[threadID] = {
+        id: threadID,
         color: ThreadColors[threadColorIndex],
         patterns: [],
         start: 0,
         loopCount: 1000,
-      });
+      };
+      state.threadUIs[threadID] = {
+        isActive: true,
+      };
+      template.threads.push(threadID);
     },
 
-    updateThread(
-      state: State,
-      action: PayloadAction<{
-        templateIndex: number;
-        threadIndex: number;
-        props: Thread;
-      }>
-    ) {
-      const { templateIndex, threadIndex, props } = action.payload;
-      const shape = state.data.templates[templateIndex];
-      if (!shape || !('threads' in shape)) return;
-      shape.threads[threadIndex] = props;
+    updateThread(state: State, action: PayloadAction<ThreadProps>) {
+      const props = action.payload;
+      const { id } = action.payload;
+      state.threads[id] = props;
     },
 
     removeThread(
       state: State,
       action: PayloadAction<{
-        templateIndex: number;
-        threadIndex: number;
+        templateID: string;
+        threadID: string;
       }>
     ) {
-      const { templateIndex, threadIndex } = action.payload;
-      const shape = state.data.templates[templateIndex];
-      if (!shape || !('threads' in shape)) return;
-      shape.threads.splice(threadIndex, 1);
+      const { templateID, threadID } = action.payload;
+      const template = state.templates[templateID];
+      if (!template || !('threads' in template)) return;
+      template.threads = template.threads.filter(
+        (current) => current !== threadID
+      );
     },
   },
 });
@@ -108,59 +161,3 @@ const editorModule = createSlice({
 export const actions = editorModule.actions;
 
 export default editorModule;
-
-export type TemplateDetailNone = PropsNone;
-export type TempalteDetailCircle = Omit<PropsCircle, 'threads'> & {
-  name: string;
-  pinPositions: [number, number][];
-  threads: ThreadDetail[];
-};
-export type TempalteDetailPolygon = Omit<PropsPolygon, 'threads'> & {
-  name: string;
-  pinPositions: [number, number][];
-  polygonVertexes: [number, number][];
-  threads: ThreadDetail[];
-};
-export type TempalteDetailStar = Omit<PropsStar, 'threads'> & {
-  name: string;
-  pinPositions: [number, number][];
-  polygonVertexes: [number, number][];
-  threads: ThreadDetail[];
-};
-export type TemplateDetail =
-  | TemplateDetailNone
-  | TempalteDetailCircle
-  | TempalteDetailPolygon
-  | TempalteDetailStar;
-
-export const getTemplates = createArraySelector(
-  [(state: State) => state.data.templates],
-  (template): TemplateDetail => {
-    switch (template.type) {
-      case 'none':
-        return template;
-      case 'circle':
-        return {
-          ...template,
-          ...generateCircleTemplate(template),
-          name: getShapeName(template),
-        };
-      case 'polygon':
-        return {
-          ...template,
-          ...generatePolygonTemplate(template),
-          name: getShapeName(template),
-        };
-      case 'star':
-        return {
-          ...template,
-          ...generateStarTemplate(template),
-          name: getShapeName(template),
-        };
-    }
-  }
-);
-
-const getShapeName = (template: TemplateProps) => {
-  return ShapeTemplates.find((s) => s.key === template.type)?.name || '';
-};

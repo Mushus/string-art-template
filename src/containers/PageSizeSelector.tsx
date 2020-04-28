@@ -4,17 +4,15 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '~/reducer';
 import { actions as editorActions } from '~/modules/editor';
 import { actions as pageActions, getPages } from '~/modules/page';
-import { parseData } from '~/modules/data/current';
+import { loadFile, saveFile } from '~/modules/data/internal';
 
 const selector = ({
-  editor: {
-    data: { templates },
-  },
+  editor: { templates, templateIDs, threads },
   page,
-}: RootState) => ({ templates, page: getPages(page) });
+}: RootState) => ({ templates, templateIDs, threads, page: getPages(page) });
 
 const PageSizeSelectorContainer = () => {
-  const { templates, page } = useSelector(selector);
+  const { templates, templateIDs, threads, page } = useSelector(selector);
   const { key, zoomFactor } = page;
 
   const dispatch = useDispatch();
@@ -51,9 +49,8 @@ const PageSizeSelectorContainer = () => {
       reader.onload = () => {
         try {
           const json = reader.result as string;
-          const obj = JSON.parse(json);
-          const data = parseData(obj);
-          dispatch(editorActions.updateData(data));
+          const data = loadFile(json);
+          dispatch(editorActions.updateFromFile(data));
         } catch (e) {
           console.log(e);
           alert('読み込みに失敗しました');
@@ -67,7 +64,11 @@ const PageSizeSelectorContainer = () => {
 
   const onClickSave = useCallback(() => {
     const fileName = 'string-art-template.json';
-    const json = JSON.stringify(templates, null, 2);
+    const json = JSON.stringify(
+      saveFile(templateIDs, templates, threads),
+      null,
+      2
+    );
     const blob = new Blob([json], { type: 'application/json' });
     if (window.navigator.msSaveBlob) {
       window.navigator.msSaveBlob(blob, fileName);
@@ -83,7 +84,7 @@ const PageSizeSelectorContainer = () => {
         URL.revokeObjectURL(url);
       });
     }
-  }, [templates]);
+  }, [templateIDs, templates, threads]);
 
   return (
     <PageSizeSelector

@@ -12,7 +12,7 @@ import styled from '@emotion/styled';
 import {
   isUnsignedInt,
   isUnsigindIntWithoutZero,
-} from '~/components/stringTemplateEditors/utils';
+} from '~/components/threadTemplateEditors/utils';
 import { useThreadUpdator } from './thread';
 
 const InputWrapper = styled.div<{ fillWidth?: boolean }>`
@@ -25,31 +25,22 @@ const InputWrapper = styled.div<{ fillWidth?: boolean }>`
       : ''};
 `;
 
-const selector = ({
-  editor: {
-    data: { templates },
-  },
-  threadDialog,
-}: RootState) => ({
-  templates,
+const selector = ({ editor: { threads }, threadDialog }: RootState) => ({
+  threads,
   threadDialog,
 });
 
 const AuxiliaryLineDialog = () => {
-  const { templates, threadDialog } = useSelector(selector);
+  const { threads, threadDialog } = useSelector(selector);
 
-  const { isOpen, templateIndex, threadIndex } = threadDialog;
-  const template = templates[templateIndex];
-  let thread: Thread | null = null;
-  if (template && 'threads' in template) {
-    thread = template.threads[threadIndex];
-  }
+  const { isOpen, id } = threadDialog;
+  const thread = threads[id];
 
   const dispatch = useDispatch();
 
   const onClose = useCallback(() => dispatch(actions.close()), [dispatch]);
 
-  const onUpdate = useThreadUpdator(templateIndex, threadIndex);
+  const onUpdate = useThreadUpdator(id);
 
   const onUpdateStart = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {

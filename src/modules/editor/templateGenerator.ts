@@ -2,11 +2,11 @@ import {
   PropsCircle,
   PropsPolygon,
   PropsStar,
-  Thread,
-} from '~/modules/data/current';
+  ThreadProps,
+} from '~/modules/data/internal';
 import { createFunctionArray } from '~/logic';
 
-export type ThreadDetail = Thread & {
+export type ThreadDetail = ThreadProps & {
   pinIndexes: number[];
   pinShifts: number[];
 };
@@ -21,23 +21,24 @@ const normalizePinNumber = (threadNumber: number, pinCount: number) => {
   return threadNumber;
 };
 
-export const createThreadMovement = (thread: Thread, pinCount: number) => {
-  let positionIndex = thread.start;
+export const createThreadMovement = (
+  start: number,
+  loopCount: number,
+  patterns: string[],
+  pinCount: number
+) => {
+  let positionIndex = start;
   const pinIndexes = [positionIndex];
   const pinShifts: number[] = [];
-  const patterns = createFunctionArray(thread.patterns);
-  if (patterns && patterns.length > 0) {
+  const patternFuncs = createFunctionArray(patterns);
+  if (patternFuncs && patternFuncs.length > 0) {
     try {
-      for (let i = 0; i < thread.loopCount; i++) {
-        if (
-          i !== 0 &&
-          i % patterns.length === 0 &&
-          positionIndex === thread.start
-        ) {
+      for (let i = 0; i < loopCount; i++) {
+        if (i !== 0 && i % patterns.length === 0 && positionIndex === start) {
           break;
         }
-        const count = Math.floor(i / patterns.length) + 1;
-        let shift = patterns[i % patterns.length](count) | 0;
+        const count = Math.floor(i / patternFuncs.length) + 1;
+        let shift = patternFuncs[i % patternFuncs.length](count) | 0;
         if (
           typeof shift !== 'number' ||
           Number.isNaN(shift) ||
@@ -62,12 +63,11 @@ export const createThreadMovement = (thread: Thread, pinCount: number) => {
   return { pinIndexes, pinShifts };
 };
 
-export const generateCircleTemplate = ({
-  radius,
-  pinNum,
-  intervalRatio,
-  threads,
-}: PropsCircle) => {
+export const generateCircleTemplate = (
+  radius: PropsCircle['radius'],
+  pinNum: PropsCircle['pinNum'],
+  intervalRatio: PropsCircle['intervalRatio']
+) => {
   const sidePosition = Math.floor((pinNum - 1) / 2);
   const partitionDistance = new Array(pinNum).fill(null).map((_, i) => {
     if (pinNum <= 2) return 1;
@@ -75,34 +75,30 @@ export const generateCircleTemplate = ({
     const b = sidePosition - a;
     return (1 * a + intervalRatio * b) / sidePosition;
   });
-  const distanceSum = partitionDistance.reduce((a, b) => a + b);
-  const round = 2 * Math.PI;
-  const unit = round / distanceSum;
+  const distanceSum = partitionDistance.reduce((a, b) => a + b, 0);
   const pinPositions: [number, number][] = [];
-  {
-    let currentAngle = 0;
-    partitionDistance.forEach((d) => {
-      pinPositions.push([
-        -Math.sin(currentAngle) * radius,
-        -Math.cos(currentAngle) * radius,
-      ]);
-      currentAngle += d * unit;
-    });
+  if (distanceSum > 0) {
+    const round = 2 * Math.PI;
+    const unit = round / distanceSum;
+    {
+      let currentAngle = 0;
+      partitionDistance.forEach((d) => {
+        pinPositions.push([
+          -Math.sin(currentAngle) * radius,
+          -Math.cos(currentAngle) * radius,
+        ]);
+        currentAngle += d * unit;
+      });
+    }
   }
-
-  const threadsCalc = threads.map<ThreadDetail>((thread) => ({
-    ...thread,
-    ...createThreadMovement(thread, pinPositions.length),
-  }));
-  return { pinPositions, threads: threadsCalc };
+  return pinPositions;
 };
 
-export const generatePolygonTemplate = ({
-  radius,
-  pinNum,
-  vertexNum,
-  threads,
-}: PropsPolygon) => {
+export const generatePolygonTemplate = (
+  radius: PropsPolygon['radius'],
+  pinNum: PropsPolygon['pinNum'],
+  vertexNum: PropsPolygon['vertexNum']
+) => {
   const angle = (2 * Math.PI) / vertexNum;
   const polygonVertexes = new Array(vertexNum)
     .fill(null)
@@ -121,20 +117,15 @@ export const generatePolygonTemplate = ({
     }
   });
 
-  const threadsCalc = threads.map<ThreadDetail>((thread) => ({
-    ...thread,
-    ...createThreadMovement(thread, pinPositions.length),
-  }));
-  return { pinPositions, polygonVertexes, threads: threadsCalc };
+  return { pinPositions, polygonVertexes };
 };
 
-export const generateStarTemplate = ({
-  outerRadius,
-  innerRadius,
-  pinNum,
-  vertexNum,
-  threads,
-}: PropsStar) => {
+export const generateStarTemplate = (
+  outerRadius: PropsStar['outerRadius'],
+  innerRadius: PropsStar['innerRadius'],
+  pinNum: PropsStar['pinNum'],
+  vertexNum: PropsStar['outerRadius']
+) => {
   const angle = (2 * Math.PI) / (vertexNum * 2);
   const polygonVertexes = new Array(vertexNum * 2)
     .fill(null)
@@ -153,9 +144,5 @@ export const generateStarTemplate = ({
     }
   });
 
-  const threadsCalc = threads.map<ThreadDetail>((thread) => ({
-    ...thread,
-    ...createThreadMovement(thread, pinPositions.length),
-  }));
-  return { pinPositions, polygonVertexes, threads: threadsCalc };
+  return { pinPositions, polygonVertexes };
 };

@@ -1,9 +1,9 @@
 import Ajv from 'ajv';
-import { parseData as parseOldFormatData, Data as V1 } from '~/modules/data/v1';
+import { parseData as parseOldFormatData, Data as V0 } from '~/modules/data/v0';
 
-const currentVersion: 2 = 2;
+const currentVersion: 1 = 1;
 
-export interface Thread {
+export interface AuxiliaryLines {
   color: string;
   patterns: string[];
   start: number;
@@ -19,7 +19,7 @@ export interface PropsCircle {
   radius: number;
   pinNum: number;
   intervalRatio: number;
-  threads: Thread[];
+  auxiliaryLines: AuxiliaryLines[];
 }
 
 export interface PropsPolygon {
@@ -27,7 +27,7 @@ export interface PropsPolygon {
   radius: number;
   vertexNum: number;
   pinNum: number;
-  threads: Thread[];
+  auxiliaryLines: AuxiliaryLines[];
 }
 
 export interface PropsStar {
@@ -36,7 +36,7 @@ export interface PropsStar {
   innerRadius: number;
   vertexNum: number;
   pinNum: number;
-  threads: Thread[];
+  auxiliaryLines: AuxiliaryLines[];
 }
 
 export type TemplateProps = PropsNone | PropsCircle | PropsPolygon | PropsStar;
@@ -46,7 +46,7 @@ export interface Data {
   templates: TemplateProps[];
 }
 
-const threadsSchema = {
+const auxiliaryLinesSchema = {
   type: 'array',
   items: [
     {
@@ -111,14 +111,14 @@ const schema = {
                   type: 'number',
                   exclusiveMinimum: 0,
                 },
-                threads: threadsSchema,
+                auxiliaryLines: auxiliaryLinesSchema,
               },
               required: [
                 'type',
                 'radius',
                 'pinNum',
                 'intervalRatio',
-                'threads',
+                'auxiliaryLines',
               ],
             },
             {
@@ -138,9 +138,15 @@ const schema = {
                   type: 'integer',
                   minimum: 1,
                 },
-                threads: threadsSchema,
+                auxiliaryLines: auxiliaryLinesSchema,
               },
-              required: ['type', 'radius', 'vertexNum', 'pinNum', 'threads'],
+              required: [
+                'type',
+                'radius',
+                'vertexNum',
+                'pinNum',
+                'auxiliaryLines',
+              ],
             },
             {
               properties: {
@@ -163,7 +169,7 @@ const schema = {
                   type: 'integer',
                   minimum: 1,
                 },
-                threads: threadsSchema,
+                auxiliaryLines: auxiliaryLinesSchema,
               },
               required: [
                 'type',
@@ -171,7 +177,7 @@ const schema = {
                 'innerRadius',
                 'vertexNum',
                 'pinNum',
-                'threads',
+                'auxiliaryLines',
               ],
             },
           ],
@@ -205,11 +211,10 @@ export const parseData = (obj: any) => {
 
   return obj as Data;
 };
-
-const migrate = (obj: V1): Data => {
+const migrate = (obj: V0): Data => {
   return {
     version: currentVersion,
-    templates: obj.templates.map((t) => {
+    templates: obj.map((t) => {
       switch (t.type) {
         case 'none':
           return t;
@@ -219,7 +224,7 @@ const migrate = (obj: V1): Data => {
             radius: t.radius,
             pinNum: t.pinNum,
             intervalRatio: t.intervalRatio,
-            threads: t.auxiliaryLines,
+            auxiliaryLines: t.auxiliaryLines,
           };
         case 'polygon':
           return {
@@ -227,7 +232,7 @@ const migrate = (obj: V1): Data => {
             radius: t.radius,
             vertexNum: t.vertexNum,
             pinNum: t.pinNum,
-            threads: t.auxiliaryLines,
+            auxiliaryLines: t.auxiliaryLines,
           };
         case 'star':
           return {
@@ -236,7 +241,7 @@ const migrate = (obj: V1): Data => {
             innerRadius: t.innerRadius,
             vertexNum: t.vertexNum,
             pinNum: t.pinNum,
-            threads: t.auxiliaryLines,
+            auxiliaryLines: t.auxiliaryLines,
           };
       }
     }),

@@ -1,13 +1,30 @@
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo, useEffect, memo } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '~/reducer';
 import Canvas from '~/components/Canvas';
-import Selector from '~/components/stringTemplates/Selector';
 import styled from '@emotion/styled';
 import { getPages } from '~/modules/page';
-import { getTemplates } from '~/modules/editor';
 import ThreadColor from '~/components/ThreadColor';
 import TemplateParams from '~/components/TemplateParams';
+import {
+  TemplateProps,
+  ThreadProps,
+  PropsCircle,
+  PropsStar,
+  PropsPolygon,
+  ValidTemplateProps,
+} from '~/modules/data/internal';
+import { DrawOptions } from '~/components/threadTemplates/types';
+import ThreadDrawer from '~/components/threadTemplates/ThreadDrawer';
+import {
+  generateCircleTemplate,
+  generatePolygonTemplate,
+  generateStarTemplate,
+  createThreadMovement,
+} from '~/modules/editor/templateGenerator';
+import PinDrawer from '~/components/threadTemplates/PinDrawer';
+import PolygonDrawer from '~/components/threadTemplates/PolygonDrawer';
+import ShapeTemplates from '~/constants/shapeTemplates';
 
 const PrintStyleId = 'printStyle';
 
@@ -17,6 +34,211 @@ export const chunked = <T extends any>(ary: Array<T>, size: number) => {
     result.push(ary.slice(i, i + size));
   }
   return result;
+};
+
+interface SelectorProps {
+  templateProps: ValidTemplateProps;
+  drawOptions: DrawOptions;
+  threadsDict: { [key: string]: ThreadProps };
+}
+
+interface ShapeProps<T extends TemplateProps> {
+  templateProps: T;
+  drawOptions: DrawOptions;
+  threads: ThreadProps[];
+}
+
+const Circle = memo(
+  ({ templateProps, drawOptions, threads }: ShapeProps<PropsCircle>) => {
+    const { radius, pinNum, intervalRatio } = templateProps;
+    const generateTemplateArgs: Parameters<typeof generateCircleTemplate> = [
+      radius,
+      pinNum,
+      intervalRatio,
+    ];
+    const pinPositions = useMemo(
+      () => generateCircleTemplate(...generateTemplateArgs),
+      generateTemplateArgs
+    );
+    return (
+      <>
+        <circle
+          cx={0}
+          cy={0}
+          r={radius}
+          fill="none"
+          stroke="black"
+          strokeWidth={0.1}
+        />
+        <PinDrawer pinPositions={pinPositions} drawOptions={drawOptions} />
+        {threads.map((thread) => (
+          <ThreadDrawer
+            key={thread.id}
+            thread={thread}
+            pinPositions={pinPositions}
+          />
+        ))}
+      </>
+    );
+  }
+);
+
+const Polygon = memo(
+  ({ templateProps, drawOptions, threads }: ShapeProps<PropsPolygon>) => {
+    const { radius, pinNum, vertexNum } = templateProps;
+    const generateTemplateArgs: Parameters<typeof generatePolygonTemplate> = [
+      radius,
+      pinNum,
+      vertexNum,
+    ];
+    const { pinPositions, polygonVertexes } = useMemo(
+      () => generatePolygonTemplate(...generateTemplateArgs),
+      generateTemplateArgs
+    );
+    return (
+      <>
+        <PolygonDrawer vertexes={polygonVertexes} />
+        <PinDrawer pinPositions={pinPositions} drawOptions={drawOptions} />
+        {threads.map((thread) => (
+          <ThreadDrawer
+            key={thread.id}
+            thread={thread}
+            pinPositions={pinPositions}
+          />
+        ))}
+      </>
+    );
+  }
+);
+
+const Star = memo(
+  ({ templateProps, drawOptions, threads }: ShapeProps<PropsStar>) => {
+    const { outerRadius, innerRadius, pinNum, vertexNum } = templateProps;
+    const generateTemplateArgs: Parameters<typeof generateStarTemplate> = [
+      outerRadius,
+      innerRadius,
+      pinNum,
+      vertexNum,
+    ];
+    const { pinPositions, polygonVertexes } = useMemo(
+      () => generateStarTemplate(...generateTemplateArgs),
+      generateTemplateArgs
+    );
+    return (
+      <>
+        <PolygonDrawer vertexes={polygonVertexes} />
+        <PinDrawer pinPositions={pinPositions} drawOptions={drawOptions} />
+        {threads.map((thread) => (
+          <ThreadDrawer
+            key={thread.id}
+            thread={thread}
+            pinPositions={pinPositions}
+          />
+        ))}
+      </>
+    );
+  }
+);
+
+const Selector = memo(
+  ({ templateProps, drawOptions, threadsDict }: SelectorProps) => {
+    const threads = templateProps.threads.map((id) => threadsDict[id]);
+    switch (templateProps.type) {
+      case 'circle':
+        return (
+          <Circle
+            templateProps={templateProps}
+            drawOptions={drawOptions}
+            threads={threads}
+          />
+        );
+      case 'polygon':
+        return (
+          <Polygon
+            templateProps={templateProps}
+            drawOptions={drawOptions}
+            threads={threads}
+          />
+        );
+      case 'star':
+        return (
+          <Star
+            templateProps={templateProps}
+            drawOptions={drawOptions}
+            threads={threads}
+          />
+        );
+      default:
+        return null;
+    }
+  }
+);
+
+interface ProcedureProps {
+  template: TemplateProps;
+  thread: ThreadProps;
+  chunkSize: number;
+  headers: JSX.Element[];
+}
+
+const Procedure = ({
+  template,
+  thread,
+  chunkSize,
+  headers,
+}: ProcedureProps) => {
+  const { start, loopCount, patterns } = thread;
+  let pinCount = 1;
+  // TODO: 外に出す
+  switch (template.type) {
+    case 'circle':
+      pinCount = template.pinNum;
+      break;
+    case 'polygon': {
+      const { pinNum, vertexNum } = template;
+      pinCount = pinNum * vertexNum;
+      break;
+    }
+    case 'star': {
+      const { pinNum, vertexNum } = template;
+      pinCount = pinNum * vertexNum * 2;
+      break;
+    }
+  }
+  const attrs: Parameters<typeof createThreadMovement> = [
+    start,
+    loopCount,
+    patterns,
+    pinCount,
+  ];
+  const { pinIndexes } = useMemo(() => createThreadMovement(...attrs), attrs);
+  return (
+    <>
+      <h1>手順</h1>
+      <h2>
+        {ShapeTemplates.find((s) => s.key === template.type)?.name}
+        糸
+        <ThreadColor color={thread.color} />
+      </h2>
+      <p>表は左上から横に読みます。</p>
+      <p>テンプレートの対応する数字のピンに紐を掛けます。</p>
+      <Table>
+        <thead>
+          <TableRow>{headers}</TableRow>
+        </thead>
+        <tbody>
+          {chunked(pinIndexes, chunkSize).map((row, i) => (
+            <TableRow key={i}>
+              <TableHead>{i * chunkSize}</TableHead>
+              {row.map((data, i) => (
+                <TableData key={i}>{data}</TableData>
+              ))}
+            </TableRow>
+          ))}
+        </tbody>
+      </Table>
+    </>
+  );
 };
 
 const Wapper = styled.div`
@@ -121,12 +343,16 @@ const TableData = styled.td`
 
 const selector = ({ page, printOptions, editor }: RootState) => ({
   page: getPages(page),
-  templates: getTemplates(editor),
+  templateIDs: editor.templateIDs,
+  templates: editor.templates,
+  threads: editor.threads,
   printOptions,
 });
 
 const Preview = () => {
-  const { page, printOptions, templates } = useSelector(selector);
+  const { page, printOptions, templateIDs, templates, threads } = useSelector(
+    selector
+  );
   const { withPinNumber, withProcedure, withParams, pinSize } = printOptions;
   const { width, height, zoomFactor } = page;
   const drawOptions = useMemo(() => ({ withPinNumber, pinSize }), [
@@ -153,70 +379,55 @@ const Preview = () => {
       <Zoomer zoomFactor={zoomFactor}>
         <Page width={width} height={height} color="red">
           <Canvas width={width} height={height}>
-            {templates.map((props, i) => (
-              <Selector key={i} drawOptions={drawOptions} {...props} />
-            ))}
+            {templateIDs.map((id) => {
+              const template = templates[id];
+              if (template.type === 'none') return null;
+              return (
+                <Selector
+                  key={id}
+                  templateProps={template}
+                  drawOptions={drawOptions}
+                  threadsDict={threads}
+                />
+              );
+            })}
           </Canvas>
           {withParams && (
             <Position top={10} left={10} width={50}>
-              {templates.map((template, i) => (
-                <TemplateParamsWrapper key={i}>
-                  <TemplateParams template={template} />
-                </TemplateParamsWrapper>
-              ))}
+              {templateIDs.map((id) => {
+                const template = templates[id];
+                return (
+                  <TemplateParamsWrapper key={id}>
+                    <TemplateParams template={template} threads={threads} />
+                  </TemplateParamsWrapper>
+                );
+              })}
             </Position>
           )}
         </Page>
         {withProcedure &&
-          templates.map((props, i) => {
-            if (!('threads' in props)) return;
-            return props.threads.map((thread, k) => (
-              <Page key={k} width={width} height={height}>
-                <PageMargin>
-                  <h1>手順</h1>
-                  <h2>
-                    {props.name}
-                    {i} 糸{k}
-                    <ThreadColor color={thread.color} />
-                  </h2>
-                  <p>表は左上から横に読みます。</p>
-                  <p>テンプレートの対応する数字のピンに紐を掛けます。</p>
-                  <Table>
-                    <thead>
-                      <TableRow>{headers}</TableRow>
-                    </thead>
-                    <tbody>
-                      {chunked(thread.pinIndexes, chunkSize).map((row, i) => (
-                        <TableRow key={i}>
-                          <TableHead>{i * chunkSize}</TableHead>
-                          {row.map((data, i) => (
-                            <TableData key={i}>{data}</TableData>
-                          ))}
-                        </TableRow>
-                      ))}
-                    </tbody>
-                  </Table>
-                  {/*
-                  <p>スタート位置: {pinNumbers.start}</p>
-                  <Table>
-                    <thead>
-                      <TableRow>{headers}</TableRow>
-                    </thead>
-                    <tbody>
-                      {chunked(pinNumbers.pinShifts, chunkSize).map((row, i) => (
-                        <TableRow key={i}>
-                          <TableHead>{i * chunkSize}</TableHead>
-                          {row.map((data, i) => (
-                            <TableData key={i}>{data}</TableData>
-                          ))}
-                        </TableRow>
-                      ))}
-                    </tbody>
-                  </Table>
-                  */}
-                </PageMargin>
-              </Page>
-            ));
+          templateIDs.map((id) => {
+            const template = templates[id];
+            if (!('threads' in template)) return;
+            return template.threads.map((id, k) => {
+              const thread = threads[id];
+              return (
+                <Page
+                  key={`${template.id}-${thread.id}`}
+                  width={width}
+                  height={height}
+                >
+                  <PageMargin>
+                    <Procedure
+                      template={template}
+                      thread={thread}
+                      chunkSize={chunkSize}
+                      headers={headers}
+                    />
+                  </PageMargin>
+                </Page>
+              );
+            });
           })}
       </Zoomer>
     </Wapper>

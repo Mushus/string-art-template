@@ -2,31 +2,22 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface State {
   isOpen: boolean;
-  templateIndex: number;
-  threadIndex: number;
+  id: string;
 }
 
 const initialState: State = {
   isOpen: false,
-  templateIndex: 0,
-  threadIndex: 0,
+  id: '',
 };
 
 const threadDialog = createSlice({
   name: 'threadDialog',
   initialState,
   reducers: {
-    open(
-      state: State,
-      action: PayloadAction<{
-        templateIndex: number;
-        threadIndex: number;
-      }>
-    ) {
-      const { templateIndex, threadIndex } = action.payload;
+    open(state: State, action: PayloadAction<string>) {
+      const id = action.payload;
       state.isOpen = true;
-      state.templateIndex = templateIndex;
-      state.threadIndex = threadIndex;
+      state.id = id;
     },
 
     close(state: State) {
