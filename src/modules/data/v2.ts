@@ -13,11 +13,13 @@ export interface Thread {
 export interface PropsNone {
   type: 'none';
   name?: string;
+  visible?: boolean;
 }
 
 export interface PropsCircle {
   type: 'circle';
   name?: string;
+  visible?: boolean;
   radius: number;
   pinNum: number;
   intervalRatio: number;
@@ -27,6 +29,7 @@ export interface PropsCircle {
 export interface PropsPolygon {
   type: 'polygon';
   name?: string;
+  visible?: boolean;
   radius: number;
   vertexNum: number;
   pinNum: number;
@@ -36,6 +39,7 @@ export interface PropsPolygon {
 export interface PropsStar {
   type: 'star';
   name?: string;
+  visible?: boolean;
   outerRadius: number;
   innerRadius: number;
   vertexNum: number;
@@ -210,16 +214,15 @@ export const parseData = (obj: any) => {
       }
       console.error(validate.errors);
     }
-    try {
-      const oldformat = parseOldFormatData(obj);
-      return migrate(oldformat);
-    } catch {
-      console.error(validate.errors);
-      throw new Error(`validation error`);
-    }
   }
 
-  return obj as Data;
+  try {
+    const oldformat = parseOldFormatData(obj);
+    return migrate(oldformat);
+  } catch {
+    console.error(validate.errors);
+    throw new Error(`validation error`);
+  }
 };
 
 const migrate = (obj: V1): Data => {

@@ -12,11 +12,13 @@ export interface Thread {
 export interface PropsNone {
   type: 'none';
   name: string;
+  visible: boolean;
 }
 
 export interface PropsCircle {
   type: 'circle';
   name: string;
+  visible: boolean;
   radius: number;
   pinNum: number;
   intervalRatio: number;
@@ -26,6 +28,7 @@ export interface PropsCircle {
 export interface PropsPolygon {
   type: 'polygon';
   name: string;
+  visible: boolean;
   radius: number;
   vertexNum: number;
   pinNum: number;
@@ -35,6 +38,7 @@ export interface PropsPolygon {
 export interface PropsStar {
   type: 'star';
   name: string;
+  visible: boolean;
   outerRadius: number;
   innerRadius: number;
   vertexNum: number;
@@ -65,6 +69,7 @@ const migrate = (obj: V2): Data => {
       type: 'none',
       ...t,
       name: t.name ?? '',
+      visible: t.visible ?? true,
     })),
   };
 };

@@ -200,16 +200,15 @@ export const parseData = (obj: any) => {
       }
       console.error(validate.errors);
     }
-    try {
-      const oldformat = parseOldFormatData(obj);
-      return migrate(oldformat);
-    } catch {
-      console.error(validate.errors);
-      throw new Error(`validation error`);
-    }
   }
 
-  return obj as Data;
+  try {
+    const oldformat = parseOldFormatData(obj);
+    return migrate(oldformat);
+  } catch {
+    console.error(validate.errors);
+    throw new Error(`validation error`);
+  }
 };
 const migrate = (obj: V0): Data => {
   return {

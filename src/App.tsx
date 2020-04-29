@@ -31,7 +31,7 @@ const Header = styled.header`
   ${notPrintable}
 `;
 
-const sideNavSize = 320;
+const sideNavSize = 350;
 
 const SideNav = styled.div`
   flex: 0 0 ${sideNavSize}px;

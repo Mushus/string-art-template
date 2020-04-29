@@ -381,7 +381,7 @@ const Preview = () => {
           <Canvas width={width} height={height}>
             {templateIDs.map((id) => {
               const template = templates[id];
-              if (template.type === 'none') return null;
+              if (template.type === 'none' || !template.visible) return null;
               return (
                 <Selector
                   key={id}

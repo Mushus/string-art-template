@@ -1,17 +1,24 @@
-import React, { ChangeEvent } from 'react';
+import React, { ChangeEvent, MouseEvent, memo } from 'react';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
-import DeleteIcon from '@material-ui/icons/Delete';
 import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
 import Tooltip from '@material-ui/core/Tooltip';
 import ShapeTemplates from '~/constants/shapeTemplates';
+import IconButton from '@material-ui/core/IconButton';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
+import VisibilityIcon from '@material-ui/icons/Visibility';
+import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
 import styled from '@emotion/styled';
 import { TemplateProps, ThreadProps } from '~/modules/data/internal';
 import Thread from '~/components/threadTemplateEditors/Thread';
-import ControlWrapper from './threadTemplateEditors/ControlWrapper';
+import ControlWrapper from '~/components/threadTemplateEditors/ControlWrapper';
+import Collapse from '~/components/Collapse';
 import EasyInput from './EasyInput';
+import { TemplateUI } from '~/modules/editor';
 
 const Wrapper = styled.div`
   display: flex;
@@ -24,16 +31,25 @@ const HeaderControl = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  margin: 10px 0 0;
+  margin: 10px 0;
   padding: 0 10px;
+`;
+const HeaderItemWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  :not(:last-child) {
+    margin-left: 5px;
+  }
 `;
 
 const BasicControl = styled.div`
-  margin: 20px 0 10px;
+  margin: 10px 0 10px;
   padding: 0 10px;
 `;
 
 const FooterControl = styled.div`
+  overflow: hidden;
   background-color: #eee;
   padding: 0 10px;
 `;
@@ -51,10 +67,16 @@ const ThreadsWrapper = styled.div`
 
 interface Props {
   props: TemplateProps;
+  ui: TemplateUI;
   threads: { [k: string]: ThreadProps };
+  isCollapse: boolean;
+  onClickMore: (
+    event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
+  ) => void;
+  onClickCollapse: () => void;
+  onClickVisible: () => void;
   onChangeName: (event: ChangeEvent<{ value: string }>) => void;
   onChangeShape: (event: ChangeEvent<{ value: unknown }>) => void;
-  onDelete: () => void;
   onAddThreads: () => void;
   onDeleteThreads: (id: string) => void;
   onUpdateThreads: (props: ThreadProps) => void;
@@ -65,10 +87,14 @@ interface Props {
 const shapeLabel = '形状';
 const TemplateEditor = ({
   props,
+  ui,
   threads,
+  isCollapse,
+  onClickMore,
+  onClickVisible,
+  onClickCollapse,
   onChangeName,
   onChangeShape,
-  onDelete,
   onAddThreads,
   onDeleteThreads,
   onUpdateThreads,
@@ -78,29 +104,33 @@ const TemplateEditor = ({
   return (
     <Wrapper>
       <HeaderControl>
-        <EasyInput
-          label="名称"
-          type="text"
-          variant="outlined"
-          size="small"
-          value={props.name}
-          onChange={onChangeName}
-        />
-        <div>
-          {/* ボタンが縦長になる */}
-          <Tooltip title="このテンプレートを削除">
-            <Button
-              className="button-icon"
-              variant="contained"
-              color="secondary"
-              onClick={onDelete}
-            >
-              <DeleteIcon />
-            </Button>
-          </Tooltip>
-        </div>
+        <HeaderItemWrapper>
+          <IconButton size="small" onClick={onClickCollapse}>
+            {isCollapse ? <KeyboardArrowDownIcon /> : <KeyboardArrowUpIcon />}
+          </IconButton>
+        </HeaderItemWrapper>
+        <HeaderItemWrapper>
+          <EasyInput
+            label="名称"
+            type="text"
+            variant="outlined"
+            size="small"
+            value={props.name}
+            onChange={onChangeName}
+          />
+        </HeaderItemWrapper>
+        <HeaderItemWrapper>
+          <IconButton size="small" onClick={onClickVisible}>
+            {props.visible ? <VisibilityIcon /> : <VisibilityOffIcon />}
+          </IconButton>
+        </HeaderItemWrapper>
+        <HeaderItemWrapper>
+          <IconButton size="small" onClick={onClickMore}>
+            <MoreVertIcon />
+          </IconButton>
+        </HeaderItemWrapper>
       </HeaderControl>
-      <div>
+      <Collapse isShow={!isCollapse}>
         <BasicControl>
           <ControlWrapper>
             <FormControl variant="outlined" size="small" fullWidth>
@@ -163,7 +193,7 @@ const TemplateEditor = ({
             })}
           </FooterControl>
         )}
-      </div>
+      </Collapse>
     </Wrapper>
   );
 };

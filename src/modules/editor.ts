@@ -4,10 +4,6 @@ import {
   TemplateProps,
   ThreadProps,
   loadFileResult,
-  PropsCircle,
-  PropsNone,
-  PropsPolygon,
-  PropsStar,
 } from '~/modules/data/internal';
 import { TemplateProps as TemplatePropsSavedata } from '~/modules/data/current';
 
@@ -27,6 +23,8 @@ export interface State {
   threads: { [k: string]: ThreadProps };
   threadUIs: { [k: string]: ThreadUI };
   threadLastID: number;
+  collapsed: string | null;
+  templateEditorMenu: { elem: any; templateID: string } | null;
 }
 
 const initialState: State = {
@@ -35,7 +33,8 @@ const initialState: State = {
     '0': {
       id: '0',
       type: 'circle',
-      name: '名称未設定',
+      name: '円形',
+      visible: true,
       radius: 75,
       pinNum: 23,
       intervalRatio: 1,
@@ -51,6 +50,8 @@ const initialState: State = {
   threads: {},
   threadUIs: {},
   threadLastID: 0,
+  collapsed: null,
+  templateEditorMenu: null,
 };
 
 const editorModule = createSlice({
@@ -83,7 +84,12 @@ const editorModule = createSlice({
       action: PayloadAction<TemplatePropsSavedata | undefined>
     ) {
       const id = String(++state.templateLastID);
-      let template: TemplateProps = { type: 'none', id, name: '' };
+      let template: TemplateProps = {
+        type: 'none',
+        id,
+        name: '',
+        visible: true,
+      };
       const savedata = action.payload;
       if (savedata && 'threads' in savedata) {
         const threads: string[] = [];
@@ -155,6 +161,26 @@ const editorModule = createSlice({
       template.threads = template.threads.filter(
         (current) => current !== threadID
       );
+    },
+
+    toggleCollapse(state: State, action?: PayloadAction<string>) {
+      const id = action?.payload;
+      if (state.collapsed === id || id == null) {
+        state.collapsed = null;
+      } else {
+        state.collapsed = id;
+      }
+    },
+
+    openMenu(
+      state: State,
+      action: PayloadAction<{ elem: any; templateID: string }>
+    ) {
+      state.templateEditorMenu = action.payload;
+    },
+
+    closeMenu(state: State) {
+      state.templateEditorMenu = null;
     },
   },
 });

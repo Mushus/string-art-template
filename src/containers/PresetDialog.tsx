@@ -17,6 +17,7 @@ const templates: Array<TemplateProps> = [
   {
     type: 'circle',
     name: 'シンプル円',
+    visible: true,
     radius: 75,
     pinNum: 24,
     intervalRatio: 1,
@@ -44,6 +45,7 @@ const templates: Array<TemplateProps> = [
   {
     type: 'polygon',
     name: 'ひしがた',
+    visible: true,
     radius: 75,
     vertexNum: 4,
     pinNum: 20,
@@ -77,6 +79,7 @@ const templates: Array<TemplateProps> = [
   {
     type: 'circle',
     name: 'くじゃく',
+    visible: true,
     radius: 75,
     pinNum: 60,
     intervalRatio: 1.8,
@@ -128,6 +131,7 @@ const templates: Array<TemplateProps> = [
   {
     type: 'circle',
     name: 'うず',
+    visible: true,
     radius: 75,
     pinNum: 60,
     intervalRatio: 1,
@@ -173,6 +177,7 @@ const templates: Array<TemplateProps> = [
   {
     type: 'circle',
     name: 'さくら',
+    visible: true,
     radius: 75,
     pinNum: 60,
     intervalRatio: 1,
@@ -212,6 +217,7 @@ const templates: Array<TemplateProps> = [
   {
     type: 'circle',
     name: 'ほし',
+    visible: true,
     radius: 75,
     pinNum: 200,
     intervalRatio: 1,

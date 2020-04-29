@@ -4,12 +4,14 @@ export interface PropsNone {
   id: string;
   type: 'none';
   name: string;
+  visible: boolean;
 }
 
 export interface PropsCircle {
   id: string;
   type: 'circle';
   name: string;
+  visible: boolean;
   radius: number;
   pinNum: number;
   intervalRatio: number;
@@ -20,6 +22,7 @@ export interface PropsPolygon {
   id: string;
   type: 'polygon';
   name: string;
+  visible: boolean;
   radius: number;
   vertexNum: number;
   pinNum: number;
@@ -30,6 +33,7 @@ export interface PropsStar {
   id: string;
   type: 'star';
   name: string;
+  visible: boolean;
   outerRadius: number;
   innerRadius: number;
   vertexNum: number;
