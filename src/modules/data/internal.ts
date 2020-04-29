@@ -3,11 +3,13 @@ import { parseData, Data } from './current';
 export interface PropsNone {
   id: string;
   type: 'none';
+  name: string;
 }
 
 export interface PropsCircle {
   id: string;
   type: 'circle';
+  name: string;
   radius: number;
   pinNum: number;
   intervalRatio: number;
@@ -17,6 +19,7 @@ export interface PropsCircle {
 export interface PropsPolygon {
   id: string;
   type: 'polygon';
+  name: string;
   radius: number;
   vertexNum: number;
   pinNum: number;
@@ -26,6 +29,7 @@ export interface PropsPolygon {
 export interface PropsStar {
   id: string;
   type: 'star';
+  name: string;
   outerRadius: number;
   innerRadius: number;
   vertexNum: number;
@@ -59,7 +63,11 @@ export const loadFile = (data: string): loadFileResult => {
   let threadID = 0;
   saveData.templates.forEach((template) => {
     if (template.type === 'none') {
-      templates[templateID] = { ...template, id: String(templateID) };
+      templates[templateID] = {
+        ...template,
+        id: String(templateID),
+        name: template.name ?? '',
+      };
     } else {
       const threadIDs: string[] = [];
       template.threads.forEach((thread) => {
@@ -69,6 +77,7 @@ export const loadFile = (data: string): loadFileResult => {
       templates[templateID] = {
         ...template,
         id: String(templateID),
+        name: template.name ?? '',
         threads: threadIDs,
       };
     }

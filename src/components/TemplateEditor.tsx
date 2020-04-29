@@ -10,6 +10,8 @@ import ShapeTemplates from '~/constants/shapeTemplates';
 import styled from '@emotion/styled';
 import { TemplateProps, ThreadProps } from '~/modules/data/internal';
 import Thread from '~/components/threadTemplateEditors/Thread';
+import ControlWrapper from './threadTemplateEditors/ControlWrapper';
+import EasyInput from './EasyInput';
 
 const Wrapper = styled.div`
   display: flex;
@@ -50,6 +52,7 @@ const ThreadsWrapper = styled.div`
 interface Props {
   props: TemplateProps;
   threads: { [k: string]: ThreadProps };
+  onChangeName: (event: ChangeEvent<{ value: string }>) => void;
   onChangeShape: (event: ChangeEvent<{ value: unknown }>) => void;
   onDelete: () => void;
   onAddThreads: () => void;
@@ -63,6 +66,7 @@ const shapeLabel = '形状';
 const TemplateEditor = ({
   props,
   threads,
+  onChangeName,
   onChangeShape,
   onDelete,
   onAddThreads,
@@ -74,21 +78,14 @@ const TemplateEditor = ({
   return (
     <Wrapper>
       <HeaderControl>
-        <FormControl variant="outlined" size="small">
-          <InputLabel>{shapeLabel}</InputLabel>
-          <Select
-            native
-            value={props.type}
-            onChange={onChangeShape}
-            label={shapeLabel}
-          >
-            {ShapeTemplates.map(({ name, key }, i) => (
-              <option key={i} value={key}>
-                {name}
-              </option>
-            ))}
-          </Select>
-        </FormControl>
+        <EasyInput
+          label="名称"
+          type="text"
+          variant="outlined"
+          size="small"
+          value={props.name}
+          onChange={onChangeName}
+        />
         <div>
           {/* ボタンが縦長になる */}
           <Tooltip title="このテンプレートを削除">
@@ -103,49 +100,70 @@ const TemplateEditor = ({
           </Tooltip>
         </div>
       </HeaderControl>
-      <BasicControl>{children}</BasicControl>
-      {'threads' in props && (
-        <FooterControl>
-          <FooterController>
-            <Tooltip title="糸を追加する">
-              <Button
-                className="button-icon"
-                variant="contained"
-                color="primary"
-                onClick={onAddThreads}
+      <div>
+        <BasicControl>
+          <ControlWrapper>
+            <FormControl variant="outlined" size="small" fullWidth>
+              <InputLabel>{shapeLabel}</InputLabel>
+              <Select
+                native
+                value={props.type}
+                onChange={onChangeShape}
+                label={shapeLabel}
               >
-                <AddIcon />
-              </Button>
-            </Tooltip>
-            <FooterTitle>糸シミュレーション</FooterTitle>
-          </FooterController>
-          {props.threads.map((threadID) => {
-            const thread = threads[threadID];
-            const { color, patterns } = thread;
-            const onDelete = () => onDeleteThreads(threadID);
-            const onUpdate = <T extends keyof ThreadProps>(
-              key: T,
-              value: ThreadProps[T]
-            ) => {
-              onUpdateThreads({ ...thread, [key]: value });
-            };
-            const onOpenDialog = () => {
-              onOpenThreadDialog(threadID);
-            };
-            return (
-              <ThreadsWrapper key={threadID}>
-                <Thread
-                  color={color}
-                  patterns={patterns}
-                  onDelete={onDelete}
-                  onUpdate={onUpdate}
-                  onOpenDialog={onOpenDialog}
-                />
-              </ThreadsWrapper>
-            );
-          })}
-        </FooterControl>
-      )}
+                {ShapeTemplates.map(({ name, key }, i) => (
+                  <option key={i} value={key}>
+                    {name}
+                  </option>
+                ))}
+              </Select>
+            </FormControl>
+          </ControlWrapper>
+          {children}
+        </BasicControl>
+        {'threads' in props && (
+          <FooterControl>
+            <FooterController>
+              <Tooltip title="糸を追加する">
+                <Button
+                  className="button-icon"
+                  variant="contained"
+                  color="primary"
+                  onClick={onAddThreads}
+                >
+                  <AddIcon />
+                </Button>
+              </Tooltip>
+              <FooterTitle>糸シミュレーション</FooterTitle>
+            </FooterController>
+            {props.threads.map((threadID) => {
+              const thread = threads[threadID];
+              const { color, patterns } = thread;
+              const onDelete = () => onDeleteThreads(threadID);
+              const onUpdate = <T extends keyof ThreadProps>(
+                key: T,
+                value: ThreadProps[T]
+              ) => {
+                onUpdateThreads({ ...thread, [key]: value });
+              };
+              const onOpenDialog = () => {
+                onOpenThreadDialog(threadID);
+              };
+              return (
+                <ThreadsWrapper key={threadID}>
+                  <Thread
+                    color={color}
+                    patterns={patterns}
+                    onDelete={onDelete}
+                    onUpdate={onUpdate}
+                    onOpenDialog={onOpenDialog}
+                  />
+                </ThreadsWrapper>
+              );
+            })}
+          </FooterControl>
+        )}
+      </div>
     </Wrapper>
   );
 };

@@ -35,6 +35,7 @@ const initialState: State = {
     '0': {
       id: '0',
       type: 'circle',
+      name: '名称未設定',
       radius: 75,
       pinNum: 23,
       intervalRatio: 1,
@@ -82,7 +83,7 @@ const editorModule = createSlice({
       action: PayloadAction<TemplatePropsSavedata | undefined>
     ) {
       const id = String(++state.templateLastID);
-      let template: TemplateProps = { type: 'none', id };
+      let template: TemplateProps = { type: 'none', id, name: '' };
       const savedata = action.payload;
       if (savedata && 'threads' in savedata) {
         const threads: string[] = [];

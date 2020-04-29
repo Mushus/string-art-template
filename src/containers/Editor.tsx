@@ -22,10 +22,12 @@ import TemplateEditor from '~/components/TemplateEditor';
 
 const defaultPropsNone: Omit<PropsNone, 'id'> = {
   type: 'none',
+  name: '',
 };
 
 const defaultPropsCircle: Omit<PropsCircle, 'id'> = {
   type: 'circle',
+  name: '',
   radius: 75,
   pinNum: 24,
   intervalRatio: 1,
@@ -34,6 +36,7 @@ const defaultPropsCircle: Omit<PropsCircle, 'id'> = {
 
 const defaultPropsPolygon: Omit<PropsPolygon, 'id'> = {
   type: 'polygon',
+  name: '',
   radius: 75,
   vertexNum: 5,
   pinNum: 5,
@@ -42,6 +45,7 @@ const defaultPropsPolygon: Omit<PropsPolygon, 'id'> = {
 
 const defaultPropsStar: Omit<PropsStar, 'id'> = {
   type: 'star',
+  name: '',
   outerRadius: 75,
   innerRadius: 50,
   vertexNum: 5,
@@ -79,6 +83,14 @@ const TemplateEditorContainer = ({
       }
     },
     [id, type, dispatch]
+  );
+
+  const onChangeName = useCallback(
+    (e: ChangeEvent<{ value: string }>) => {
+      const name = e.target.value;
+      dispatch(actions.updateShape({ ...props, name }));
+    },
+    [props]
   );
 
   const onDelete = useCallback(() => {
@@ -119,6 +131,7 @@ const TemplateEditorContainer = ({
     <TemplateEditor
       props={props}
       threads={threads}
+      onChangeName={onChangeName}
       onChangeShape={onChangeShape}
       onDelete={onDelete}
       onAddThreads={onAddThreads}
