@@ -9,6 +9,9 @@ import editorModule, { State as EditorState } from '~/modules/editor';
 import threadDialogModule, {
   State as ThreadDialogState,
 } from '~/modules/threadDialog';
+import addTemplateMenuModule, {
+  State as AddTemplateMenuState,
+} from '~/modules/addTemplateMenu';
 import { combineReducers } from '@reduxjs/toolkit';
 
 export interface RootState {
@@ -17,6 +20,7 @@ export interface RootState {
   presetDialog: PresetDialogState;
   printOptions: PrintOptionsState;
   threadDialog: ThreadDialogState;
+  addTemplateMenu: AddTemplateMenuState;
 }
 
 const rootReducer = combineReducers<RootState>({
@@ -25,6 +29,7 @@ const rootReducer = combineReducers<RootState>({
   presetDialog: presetDialogModule.reducer,
   printOptions: printOptionsModule.reducer,
   threadDialog: threadDialogModule.reducer,
+  addTemplateMenu: addTemplateMenuModule.reducer,
 });
 
 export default rootReducer;

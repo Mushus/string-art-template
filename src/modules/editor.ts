@@ -25,6 +25,7 @@ export interface State {
   threadLastID: number;
   collapsed: string | null;
   templateEditorMenu: { elem: any; templateID: string } | null;
+  addTemplateMenu: { isOpen: boolean };
 }
 
 const initialState: State = {
@@ -50,8 +51,9 @@ const initialState: State = {
   threads: {},
   threadUIs: {},
   threadLastID: 0,
-  collapsed: null,
+  collapsed: '0',
   templateEditorMenu: null,
+  addTemplateMenu: { isOpen: false },
 };
 
 const editorModule = createSlice({
@@ -110,6 +112,7 @@ const editorModule = createSlice({
       state.templates[id] = template;
       state.templateUIs[id] = { isActive: false };
       state.templateIDs.push(id);
+      state.collapsed = id;
     },
 
     updateShape(state: State, action: PayloadAction<TemplateProps>) {
@@ -200,6 +203,14 @@ const editorModule = createSlice({
 
     closeMenu(state: State) {
       state.templateEditorMenu = null;
+    },
+
+    openAddTemplateMenu(state: State) {
+      state.addTemplateMenu.isOpen = true;
+    },
+
+    closeAddTemplateMenu(state: State) {
+      state.addTemplateMenu.isOpen = false;
     },
   },
 });
