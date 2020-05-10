@@ -118,6 +118,25 @@ const editorModule = createSlice({
       state.templates[id] = props;
     },
 
+    moveShape(
+      state: State,
+      action: PayloadAction<{ templateID: string; moveTo: number }>
+    ) {
+      const { templateID, moveTo } = action.payload;
+      const targetIndex = state.templateIDs.findIndex(
+        (id) => id === templateID
+      );
+      if (targetIndex === -1) return;
+
+      const swappedIndex = targetIndex + moveTo;
+      if (swappedIndex < 0 || state.templateIDs.length <= swappedIndex) return;
+
+      const a = state.templateIDs[targetIndex];
+      const b = state.templateIDs[swappedIndex];
+      state.templateIDs[targetIndex] = b;
+      state.templateIDs[swappedIndex] = a;
+    },
+
     removeShape(state: State, action: PayloadAction<string>) {
       const id = action.payload;
       state.templateIDs = state.templateIDs.filter((current) => current !== id);

@@ -27,7 +27,8 @@ const Collapse = ({ isShow, children }: Props) => {
       <Measure
         bounds
         onResize={(contentRect) => {
-          setHeight(contentRect.bounds?.height ?? 0);
+          const height = Number(contentRect.entry?.height ?? 0);
+          setHeight(height);
         }}
       >
         {({ measureRef }) => <Measures ref={measureRef}>{children}</Measures>}

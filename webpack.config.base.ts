@@ -21,7 +21,12 @@ const config: Configuration = {
       },
       {
         test: /\.tsx?$/,
-        use: 'ts-loader',
+        use: {
+          loader: 'ts-loader',
+          options: {
+            transpileOnly: true,
+          }
+        }
       },
       {
         test: /\.s[ac]ss$/i,

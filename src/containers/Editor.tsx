@@ -1,6 +1,7 @@
-import React, { useCallback, ChangeEvent, MouseEvent, memo } from 'react';
+import React, { useCallback, ChangeEvent, MouseEvent, forwardRef } from 'react';
 import styled from '@emotion/styled';
 import { useSelector, useDispatch } from 'react-redux';
+import FlipMove from 'react-flip-move';
 import { RootState } from '~/reducer';
 import { actions, TemplateUI } from '~/modules/editor';
 import { actions as presetDialogActions } from '~/modules/presetDialog';
@@ -21,6 +22,7 @@ import Selector from '~/components/threadTemplateEditors/Selector';
 import TemplateEditor from '~/components/TemplateEditor';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import Divider from '@material-ui/core/Divider';
 
 const defaultPropsNone: Omit<PropsNone, 'id'> = {
   type: 'none',
@@ -67,95 +69,87 @@ interface TemplateEditorContainerProps {
   children?: React.ReactNode;
 }
 
-const TemplateEditorContainer = memo(
-  ({
-    props,
-    ui,
-    threads,
-    isCollapse,
-    children,
-  }: TemplateEditorContainerProps) => {
-    const dispatch = useDispatch();
-    const { id, type } = props;
+const TemplateEditorContainer = forwardRef<
+  HTMLDivElement,
+  TemplateEditorContainerProps
+>(({ props, ui, threads, isCollapse, children }, ref) => {
+  const dispatch = useDispatch();
+  const { id, type } = props;
 
-    const onClickCollapse = useCallback(
-      () => dispatch(actions.toggleCollapse(id)),
-      [id, dispatch]
-    );
+  const onClickCollapse = useCallback(
+    () => dispatch(actions.toggleCollapse(id)),
+    [id, dispatch]
+  );
 
-    const onChangeShape = useCallback(
-      (e: ChangeEvent<{ value: unknown }>) => {
-        const { value } = e.target;
-        if (value === type) return;
-        switch (value) {
-          case 'circle':
-            return dispatch(actions.updateShape({ id, ...defaultPropsCircle }));
-          case 'polygon':
-            return dispatch(
-              actions.updateShape({ id, ...defaultPropsPolygon })
-            );
-          case 'star':
-            return dispatch(actions.updateShape({ id, ...defaultPropsStar }));
-          default:
-            return dispatch(actions.updateShape({ id, ...defaultPropsNone }));
-        }
-      },
-      [id, type, dispatch]
-    );
+  const onChangeShape = useCallback(
+    (e: ChangeEvent<{ value: unknown }>) => {
+      const { value } = e.target;
+      if (value === type) return;
+      switch (value) {
+        case 'circle':
+          return dispatch(actions.updateShape({ id, ...defaultPropsCircle }));
+        case 'polygon':
+          return dispatch(actions.updateShape({ id, ...defaultPropsPolygon }));
+        case 'star':
+          return dispatch(actions.updateShape({ id, ...defaultPropsStar }));
+        default:
+          return dispatch(actions.updateShape({ id, ...defaultPropsNone }));
+      }
+    },
+    [id, type, dispatch]
+  );
 
-    const onClickVisible = useCallback(
-      () =>
-        dispatch(actions.updateShape({ ...props, visible: !props.visible })),
-      [props, dispatch]
-    );
+  const onClickVisible = useCallback(
+    () => dispatch(actions.updateShape({ ...props, visible: !props.visible })),
+    [props, dispatch]
+  );
 
-    const onChangeName = useCallback(
-      (e: ChangeEvent<{ value: string }>) => {
-        const name = e.target.value;
-        dispatch(actions.updateShape({ ...props, name }));
-      },
-      [props]
-    );
+  const onChangeName = useCallback(
+    (e: ChangeEvent<{ value: string }>) => {
+      const name = e.target.value;
+      dispatch(actions.updateShape({ ...props, name }));
+    },
+    [props]
+  );
 
-    const onAddThreads = useCallback(() => {
-      dispatch(actions.addThread({ templateID: id }));
-    }, [id, dispatch]);
+  const onAddThreads = useCallback(() => {
+    dispatch(actions.addThread({ templateID: id }));
+  }, [id, dispatch]);
 
-    const onDeleteThreads = useCallback(
-      (threadID: string) => {
-        dispatch(
-          actions.removeThread({
-            templateID: id,
-            threadID,
-          })
-        );
-      },
-      [id, dispatch]
-    );
+  const onDeleteThreads = useCallback(
+    (threadID: string) => {
+      dispatch(
+        actions.removeThread({
+          templateID: id,
+          threadID,
+        })
+      );
+    },
+    [id, dispatch]
+  );
 
-    const onUpdateThreads = useCallback(
-      (props: ThreadProps) => {
-        dispatch(actions.updateThread(props));
-      },
-      [dispatch]
-    );
+  const onUpdateThreads = useCallback(
+    (props: ThreadProps) => {
+      dispatch(actions.updateThread(props));
+    },
+    [dispatch]
+  );
 
-    const onOpenThreadDialog = useCallback(
-      (id: string) => {
-        dispatch(threadActions.open(id));
-      },
-      [dispatch]
-    );
+  const onOpenThreadDialog = useCallback(
+    (id: string) => {
+      dispatch(threadActions.open(id));
+    },
+    [dispatch]
+  );
 
-    const onOpenMenu = useCallback(
-      (event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) =>
-        dispatch(
-          actions.openMenu({ elem: event.currentTarget, templateID: id })
-        ),
-      [id, dispatch]
-    );
+  const onOpenMenu = useCallback(
+    (event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) =>
+      dispatch(actions.openMenu({ elem: event.currentTarget, templateID: id })),
+    [id, dispatch]
+  );
 
-    return (
+  return (
+    <div ref={ref}>
       <TemplateEditor
         props={props}
         ui={ui}
@@ -173,9 +167,9 @@ const TemplateEditorContainer = memo(
       >
         {children}
       </TemplateEditor>
-    );
-  }
-);
+    </div>
+  );
+});
 
 const Wrapper = styled.div`
   margin: 10px;
@@ -232,6 +226,26 @@ const EditorContainer = () => {
     dispatch,
   ]);
 
+  const handleFlipUp = useCallback(() => {
+    dispatch(
+      actions.moveShape({
+        templateID: templateEditorMenu?.templateID || '',
+        moveTo: -1,
+      })
+    );
+    handleClose();
+  }, [templateEditorMenu, handleClose, dispatch]);
+
+  const handleFlipDown = useCallback(() => {
+    dispatch(
+      actions.moveShape({
+        templateID: templateEditorMenu?.templateID || '',
+        moveTo: 1,
+      })
+    );
+    handleClose();
+  }, [templateEditorMenu, handleClose, dispatch]);
+
   const handleDeleteShape = useCallback(() => {
     dispatch(actions.removeShape(templateEditorMenu?.templateID || ''));
     handleClose();
@@ -246,6 +260,9 @@ const EditorContainer = () => {
         open={Boolean(templateEditorMenu)}
         onClose={handleClose}
       >
+        <MenuItem onClick={handleFlipUp}>上へ移動</MenuItem>
+        <MenuItem onClick={handleFlipDown}>下へ移動</MenuItem>
+        <Divider />
         <MenuItem onClick={handleDeleteShape}>削除</MenuItem>
       </Menu>
       <Controller>
@@ -275,21 +292,23 @@ const EditorContainer = () => {
         </ButtonWrapper>
       </Controller>
       <Editor>
-        {templateIDs.map((id) => {
-          const props = templates[id];
-          const ui = templateUIs[id];
-          return (
-            <TemplateEditorContainer
-              isCollapse={collapsed !== id}
-              key={id}
-              props={props}
-              ui={ui}
-              threads={threads}
-            >
-              <Selector props={props} />
-            </TemplateEditorContainer>
-          );
-        })}
+        <FlipMove>
+          {templateIDs.map((id) => {
+            const props = templates[id];
+            const ui = templateUIs[id];
+            return (
+              <TemplateEditorContainer
+                isCollapse={collapsed !== id}
+                key={id}
+                props={props}
+                ui={ui}
+                threads={threads}
+              >
+                <Selector props={props} />
+              </TemplateEditorContainer>
+            );
+          })}
+        </FlipMove>
       </Editor>
     </Wrapper>
   );
